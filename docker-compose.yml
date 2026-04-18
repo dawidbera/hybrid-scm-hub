@@ -1,0 +1,28 @@
+# Docker Compose file to orchestrate the infrastructure for Hybrid-Cloud SCM Hub.
+# This setup provides two PostgreSQL instances to simulate a hybrid IT landscape.
+
+version: '3.8'
+services:
+  # On-Premise Database instance.
+  # Represents the local database running in a warehouse or remote facility.
+  postgres-onprem:
+    image: postgres:15
+    container_name: scm-onprem-db
+    environment:
+      POSTGRES_DB: scm_onprem
+      POSTGRES_USER: scm_user
+      POSTGRES_PASSWORD: scm_password
+    ports:
+      - "5432:5432" # Standard PostgreSQL port mapped to the host.
+
+  # Cloud Simulation Database instance.
+  # Represents the centralized cloud-based database for corporate analytics.
+  postgres-cloud:
+    image: postgres:15
+    container_name: scm-cloud-db
+    environment:
+      POSTGRES_DB: scm_cloud
+      POSTGRES_USER: scm_user
+      POSTGRES_PASSWORD: scm_password
+    ports:
+      - "5433:5432" # Mapped to host port 5433 to avoid conflict with the on-prem instance.

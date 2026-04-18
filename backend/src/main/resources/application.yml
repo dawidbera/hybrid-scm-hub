@@ -1,0 +1,36 @@
+# Main configuration file for the SCM Hub Spring Boot application.
+# This file defines datasource connections, JPA settings, and logging levels.
+
+spring:
+  application:
+    name: scm-hub
+  
+  # Dual datasource configuration to simulate hybrid-cloud environment.
+  datasource:
+    # On-Premise database configuration - represents the local warehouse database.
+    onprem:
+      url: jdbc:postgresql://localhost:5432/scm_onprem
+      username: scm_user
+      password: scm_password
+      driver-class-name: org.postgresql.Driver
+    # Cloud database configuration - represents the centralized corporate analytics database.
+    cloud:
+      url: jdbc:postgresql://localhost:5433/scm_cloud
+      username: scm_user
+      password: scm_password
+      driver-class-name: org.postgresql.Driver
+
+  # JPA / Hibernate configuration.
+  jpa:
+    hibernate:
+      ddl-auto: update # Automatically updates the schema based on entity changes.
+    show-sql: true     # Logs SQL statements to the console.
+    properties:
+      hibernate:
+        format_sql: true # Formats the logged SQL for better readability.
+
+# Logging configuration.
+logging:
+  level:
+    org.springframework.integration: INFO
+    org.hibernate.SQL: DEBUG

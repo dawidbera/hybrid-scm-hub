@@ -2,8 +2,10 @@ package com.scm.hub.infrastructure.adapter.sync;
 
 import com.scm.hub.infrastructure.adapter.persistence.entity.ProductEntity;
 import com.scm.hub.infrastructure.adapter.persistence.entity.SyncLogEntity;
+import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.OrderRepository;
 import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.ProductRepository;
 import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.SyncLogRepository;
+import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.OrderRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class SyncService {
 
     private final ProductRepository productRepository;
     private final SyncLogRepository syncLogRepository;
+    private final OrderRepository orderRepository;
 
     @PersistenceContext(unitName = "cloud")
     private EntityManager cloudEntityManager;
@@ -42,6 +45,10 @@ public class SyncService {
             if ("Product".equals(syncLog.getEntityName())) {
                 productRepository.findById(syncLog.getEntityId()).ifPresent(product -> {
                     cloudEntityManager.merge(product);
+                });
+            } else if ("Order".equals(syncLog.getEntityName())) {
+                orderRepository.findById(syncLog.getEntityId()).ifPresent(order -> {
+                    cloudEntityManager.merge(order);
                 });
             }
             // Add other entities as needed

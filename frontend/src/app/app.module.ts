@@ -4,11 +4,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './features/dashboard.component';
+import { AuditTrailComponent } from './features/audit-trail/audit-trail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent
+    DashboardComponent,
+    AuditTrailComponent
   ],
   imports: [
     BrowserModule,

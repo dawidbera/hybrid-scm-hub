@@ -83,7 +83,8 @@ public class InventoryService {
                 .quantity(quantity)
                 .lastUpdated(LocalDateTime.now())
                 .build();
-        return inventoryPort.saveStock(stock);
+        Stock savedStock = inventoryPort.saveStock(stock);
+        return savedStock;
     }
 
     /**

@@ -20,6 +20,11 @@ public class OrderService {
     private final OrderPort orderPort;
 
     public Order createOrder(Order order) {
+        // Calculate total from items
+        double total = order.getItems().stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+        order.setTotal(total);
         order.setStatus("Created");
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());

@@ -23,6 +23,14 @@ export class InventoryService {
     return this.http.get<Stock[]>(`${this.apiUrl}/stock/warehouse/${warehouseId}`);
   }
 
+  createProduct(product: Product): Observable<Product> {
+    return this.http.post<Product>(`${this.apiUrl}/products`, product);
+  }
+
+  createWarehouse(warehouse: Warehouse): Observable<Warehouse> {
+    return this.http.post<Warehouse>(`${this.apiUrl}/warehouses`, warehouse);
+  }
+
   updateStock(productId: string, warehouseId: string, quantity: number): Observable<Stock> {
     return this.http.post<Stock>(`${this.apiUrl}/stock`, null, {
       params: { productId, warehouseId, quantity: quantity.toString() }

@@ -8,7 +8,7 @@
     <section class="warehouse-selector">
       <h3>Select Warehouse</h3>
       <div class="warehouse-grid">
-        <div *ngFor="let w of warehouses" 
+        <div *ngFor="let w of warehouses$ | async" 
              class="warehouse-card" 
              (click)="onWarehouseSelect(w.id!)">
           <h4>{{w.name}}</h4>
@@ -17,28 +17,33 @@
       </div>
     </section>
 
-    <section class="stock-display" *ngIf="selectedWarehouseStocks.length > 0">
+    <section class="stock-display">
       <h3>Stock Levels</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Product ID</th>
-            <th>Quantity</th>
-            <th>Last Updated</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let s of selectedWarehouseStocks" class="stock-row">
-            <td>{{s.productId}}</td>
-            <td>
-              <span class="quantity-badge" [class.low]="s.quantity < 10">
-                {{s.quantity}}
-              </span>
-            </td>
-            <td>{{s.lastUpdated | date:'medium'}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div *ngIf="stocks$ | async as stocks; else noStocks">
+        <table>
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Quantity</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of stocks" class="stock-row">
+              <td>{{s.productId}}</td>
+              <td>
+                <span class="quantity-badge" [class.low]="s.quantity < 10">
+                  {{s.quantity}}
+                </span>
+              </td>
+              <td>{{s.lastUpdated | date:'medium'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noStocks>
+        <p>No stocks available</p>
+      </ng-template>
     </section>
   </main>
 </div>

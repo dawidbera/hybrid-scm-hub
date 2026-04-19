@@ -1,0 +1,55 @@
+<div class="inventory-container">
+  <h2>Inventory Management</h2>
+
+  <div class="section">
+    <h3>Add Product</h3>
+    <form (ngSubmit)="addProduct()" #productForm="ngForm">
+      <input [(ngModel)]="newProduct.sku" name="sku" placeholder="SKU" required>
+      <input [(ngModel)]="newProduct.name" name="name" placeholder="Name" required>
+      <input [(ngModel)]="newProduct.description" name="description" placeholder="Description">
+      <input [(ngModel)]="newProduct.basePrice" name="basePrice" type="number" placeholder="Base Price" required>
+      <button type="submit" [disabled]="!productForm.valid">Add Product</button>
+    </form>
+  </div>
+
+  <div class="section">
+    <h3>Products</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products">
+          <td>{{p.sku}}</td>
+          <td>{{p.name}}</td>
+          <td>{{p.description}}</td>
+          <td>{{p.basePrice}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Add Warehouse</h3>
+    <form (ngSubmit)="addWarehouse()" #warehouseForm="ngForm">
+      <input [(ngModel)]="newWarehouse.name" name="name" placeholder="Name" required>
+      <input [(ngModel)]="newWarehouse.location" name="location" placeholder="Location" required>
+      <button type="submit" [disabled]="!warehouseForm.valid">Add Warehouse</button>
+    </form>
+  </div>
+
+  <div class="section">
+    <h3>Warehouses</h3>
+    <div class="warehouse-list">
+      <div *ngFor="let w of warehouses$ | async" class="warehouse-item">
+        <h4>{{w.name}}</h4>
+        <p>{{w.location}}</p>
+      </div>
+    </div>
+  </div>
+</div>

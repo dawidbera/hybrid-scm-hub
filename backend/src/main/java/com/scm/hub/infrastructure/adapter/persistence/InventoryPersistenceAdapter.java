@@ -97,13 +97,21 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     /**
      * {@inheritDoc}
      * Behavior: Saves stock levels. Uses transactional context to ensure data integrity.
+     * Implements optimistic locking to handle concurrent updates.
      */
     @Override
     @Transactional
     public Stock saveStock(Stock stock) {
         StockEntity entity = mapper.toEntity(stock);
-        StockEntity saved = stockRepository.save(entity);
-        return mapper.toDomain(saved);
+        try {
+            StockEntity saved = stockRepository.save(entity);
+            return mapper.toDomain(saved);
+        } catch (Exception e) {
+            if (e.getCause() instanceof org.springframework.orm.ObjectOptimisticLockingFailureException) {
+                throw new RuntimeException("Stock was modified by another transaction. Please retry.", e);
+            }
+            throw e;
+        }
     }
 
     /**

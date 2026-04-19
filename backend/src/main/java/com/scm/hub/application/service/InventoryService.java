@@ -4,6 +4,7 @@ import com.scm.hub.domain.model.Product;
 import com.scm.hub.domain.model.Stock;
 import com.scm.hub.domain.model.Warehouse;
 import com.scm.hub.domain.port.InventoryPort;
+import com.scm.hub.infrastructure.adapter.rest.WebSocketController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class InventoryService {
 
     private final InventoryPort inventoryPort;
+    private final WebSocketController webSocketController;
 
     /**
      * Creates a new product in the system.
@@ -84,6 +86,7 @@ public class InventoryService {
                 .lastUpdated(LocalDateTime.now())
                 .build();
         Stock savedStock = inventoryPort.saveStock(stock);
+        webSocketController.broadcastStockUpdate(savedStock);
         return savedStock;
     }
 

@@ -2,12 +2,14 @@ package com.scm.hub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Entry point for the Hybrid-Cloud SCM Hub application.
  * This class initializes the Spring Boot context and starts the application.
  */
 @SpringBootApplication
+@ComponentScan(basePackages = "com.scm.hub")
 public class HubApplication {
 
     /**

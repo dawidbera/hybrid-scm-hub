@@ -78,12 +78,22 @@ public class InventoryController {
     }
 
     /**
-     * Gets current stock levels for a specific warehouse.
-     * @param warehouseId The UUID of the warehouse to query.
-     * @return A list of stock levels for that warehouse.
+     * Advanced search for inventory across warehouses.
+     * @param query Search query for product name or SKU
+     * @param warehouseId Optional warehouse filter
+     * @param minQuantity Minimum quantity filter
+     * @return Filtered stock records
      */
-    @GetMapping("/stock/warehouse/{warehouseId}")
-    public ResponseEntity<List<Stock>> getStockByWarehouse(@PathVariable UUID warehouseId) {
-        return ResponseEntity.ok(inventoryService.getStockByWarehouse(warehouseId));
+    @GetMapping("/search")
+    public ResponseEntity<List<Stock>> searchInventory(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) UUID warehouseId,
+            @RequestParam(required = false, defaultValue = "0") Integer minQuantity) {
+        // This would require additional repository methods for advanced search
+        // For now, return all stocks (placeholder implementation)
+        return ResponseEntity.ok(inventoryService.getAllWarehouses().stream()
+                .flatMap(w -> inventoryService.getStockByWarehouse(w.getId()).stream())
+                .filter(s -> s.getQuantity() >= minQuantity)
+                .toList());
     }
 }

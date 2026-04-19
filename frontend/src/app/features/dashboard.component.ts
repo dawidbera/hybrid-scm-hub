@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
 import { InventoryService } from '../core/services/inventory.service';
 import { RealtimeService } from '../core/services/realtime.service';
 import { Stock, Warehouse } from '../core/models/inventory.model';
-import { Observable } from 'rxjs';
+import { selectWarehouses, selectStocks, selectLoading } from '../state/inventory/inventory.selectors';
+import * as InventoryActions from '../state/inventory/inventory.actions';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,29 +13,32 @@ import { Observable } from 'rxjs';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  warehouses: Warehouse[] = [];
-  selectedWarehouseStocks: Stock[] = [];
+  warehouses$: Observable<Warehouse[]>;
+  stocks$: Observable<Stock[]> = of([]);
+  loading$: Observable<boolean>;
 
   constructor(
+    private store: Store,
     private inventoryService: InventoryService,
     private realtimeService: RealtimeService
-  ) {}
+  ) {
+    this.warehouses$ = this.store.select(selectWarehouses);
+    this.stocks$ = this.store.select(selectStocks);
+    this.loading$ = this.store.select(selectLoading);
+  }
 
   ngOnInit(): void {
-    this.inventoryService.getWarehouses().subscribe(w => this.warehouses = w);
+    this.store.dispatch(InventoryActions.loadWarehouses());
     
     this.realtimeService.getUpdates().subscribe(update => {
       // Handle real-time stock updates
       if (update.type === 'STOCK_UPDATE') {
-        const index = this.selectedWarehouseStocks.findIndex(s => s.id === update.data.id);
-        if (index !== -1) {
-          this.selectedWarehouseStocks[index] = update.data;
-        }
+        // Dispatch action to update state
       }
     });
   }
 
   onWarehouseSelect(warehouseId: string): void {
-    this.inventoryService.getStockByWarehouse(warehouseId).subscribe(s => this.selectedWarehouseStocks = s);
+    this.store.dispatch(InventoryActions.loadStock({ warehouseId }));
   }
 }

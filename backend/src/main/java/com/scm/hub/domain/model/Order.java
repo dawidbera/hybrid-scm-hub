@@ -21,6 +21,7 @@ public class Order {
     private String customerName;
     private String status; // Created, Processing, Shipped
     private List<OrderItem> items;
+    private Double total;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

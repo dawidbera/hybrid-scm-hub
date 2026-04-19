@@ -1,4 +1,9 @@
 /**
+ * Possible lifecycle statuses for an order.
+ */
+export type OrderStatus = 'CREATED' | 'PROCESSING' | 'SHIPPED';
+
+/**
  * Represents an individual item within an order.
  */
 export interface OrderItem {
@@ -20,8 +25,8 @@ export interface Order {
   id?: string;
   /** Name of the customer who placed the order */
   customerName: string;
-  /** Current lifecycle status of the order (e.g., 'CREATED', 'SHIPPED') */
-  status?: string;
+  /** Current lifecycle status of the order */
+  status?: OrderStatus;
   /** List of items included in this order */
   items: OrderItem[];
   /** Total value of the order (calculated) */

@@ -1,6 +1,7 @@
 package com.scm.hub.application.service;
 
 import com.scm.hub.domain.model.Order;
+import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.domain.port.OrderPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,18 +19,21 @@ class OrderServiceTest {
     @Mock
     private OrderPort orderPort;
 
+    @Mock
+    private InventoryService inventoryService;
+
     @InjectMocks
     private OrderService orderService;
 
     @Test
     void createOrder_shouldCreateOrder() {
         Order order = Order.builder().customerName("Test").build();
-        when(orderPort.createOrder(any(Order.class))).thenReturn(order);
+        when(orderPort.saveOrder(any(Order.class))).thenReturn(order);
 
         Order result = orderService.createOrder(order);
 
         assertThat(result).isNotNull();
         assertThat(result.getCustomerName()).isEqualTo("Test");
-        assertThat(result.getStatus()).isEqualTo("Created");
+        assertThat(result.getStatus()).isEqualTo(OrderStatus.CREATED);
     }
 }

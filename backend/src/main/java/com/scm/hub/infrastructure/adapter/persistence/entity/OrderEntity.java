@@ -1,5 +1,6 @@
 package com.scm.hub.infrastructure.adapter.persistence.entity;
 
+import com.scm.hub.domain.model.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,8 +30,9 @@ public class OrderEntity {
     /** Name of the customer who placed the order */
     private String customerName;
 
-    /** Lifecycle status of the order (e.g., Created, Processing, Shipped) */
-    private String status;
+    /** Lifecycle status of the order (CREATED, PROCESSING, SHIPPED) */
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     /** Collection of items belonging to this order, handled with lazy loading */
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

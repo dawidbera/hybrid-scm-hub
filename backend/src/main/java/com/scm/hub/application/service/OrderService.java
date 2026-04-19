@@ -2,6 +2,7 @@ package com.scm.hub.application.service;
 
 import com.scm.hub.domain.model.Order;
 import com.scm.hub.domain.model.OrderItem;
+import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.domain.port.OrderPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class OrderService {
      * Creates a new order in the system.
      * Behavior:
      * 1. Calculates the total order price from items.
-     * 2. Sets the initial status to "Created".
+     * 2. Sets the initial status to CREATED.
      * 3. Reduces stock for each item in the order via {@link InventoryService}.
      * 4. Persists the order via {@link OrderPort}.
      *
@@ -40,7 +41,7 @@ public class OrderService {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
         order.setTotal(total);
-        order.setStatus("Created");
+        order.setStatus(OrderStatus.CREATED);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
 
@@ -55,7 +56,7 @@ public class OrderService {
             }
         }
 
-        return orderPort.createOrder(order);
+        return orderPort.saveOrder(order);
     }
 
     /**
@@ -81,10 +82,10 @@ public class OrderService {
      * Updates the status of an existing order.
      *
      * @param id The UUID of the order to update.
-     * @param status The new status (e.g., "Processing", "Shipped").
+     * @param status The new status (CREATED, PROCESSING, SHIPPED).
      * @return The updated order, or null if the order was not found.
      */
-    public Order updateOrderStatus(UUID id, String status) {
+    public Order updateOrderStatus(UUID id, OrderStatus status) {
         Order order = orderPort.getOrderById(id);
         if (order == null) {
             return null;

@@ -1,10 +1,9 @@
 package com.scm.hub.infrastructure.adapter.persistence;
 
 import com.scm.hub.domain.model.Order;
-import com.scm.hub.domain.model.OrderItem;
+import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.domain.port.OrderPort;
 import com.scm.hub.infrastructure.adapter.persistence.entity.OrderEntity;
-import com.scm.hub.infrastructure.adapter.persistence.entity.OrderItemEntity;
 import com.scm.hub.infrastructure.adapter.persistence.entity.SyncLogEntity;
 import com.scm.hub.infrastructure.adapter.persistence.mapper.OrderMapper;
 import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.OrderRepository;
@@ -38,7 +37,7 @@ public class OrderPersistenceAdapter implements OrderPort {
      */
     @Override
     @Transactional
-    public Order createOrder(Order order) {
+    public Order saveOrder(Order order) {
         OrderEntity entity = orderMapper.toEntity(order);
         entity = orderRepository.save(entity);
         Order result = orderMapper.toDomain(entity);
@@ -86,7 +85,7 @@ public class OrderPersistenceAdapter implements OrderPort {
      */
     @Override
     @Transactional
-    public Order updateOrderStatus(UUID id, String status) {
+    public Order updateOrderStatus(UUID id, OrderStatus status) {
         OrderEntity entity = orderRepository.findById(id).orElse(null);
         if (entity != null) {
             entity.setStatus(status);

@@ -28,8 +28,8 @@ public class Order {
     private UUID id;
     /** Name of the customer who placed the order */
     private String customerName;
-    /** Current status in the order lifecycle (e.g., "Created", "Processing", "Shipped") */
-    private String status;
+    /** Current status in the order lifecycle (e.g., CREATED, PROCESSING, SHIPPED) */
+    private OrderStatus status;
     /** List of individual items included in this order */
     private List<OrderItem> items;
     /** Total calculated monetary value of the order */

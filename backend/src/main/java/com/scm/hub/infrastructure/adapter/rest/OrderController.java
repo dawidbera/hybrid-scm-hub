@@ -2,6 +2,7 @@ package com.scm.hub.infrastructure.adapter.rest;
 
 import com.scm.hub.application.service.OrderService;
 import com.scm.hub.domain.model.Order;
+import com.scm.hub.domain.model.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,11 +58,11 @@ public class OrderController {
      * Updates the status of an existing order.
      * 
      * @param id The UUID of the order.
-     * @param status The new status string.
+     * @param status The new status (CREATED, PROCESSING, SHIPPED).
      * @return The updated order, or 404 Not Found.
      */
     @PutMapping("/{id}/status")
-    public ResponseEntity<Order> updateOrderStatus(@PathVariable UUID id, @RequestParam String status) {
+    public ResponseEntity<Order> updateOrderStatus(@PathVariable UUID id, @RequestParam OrderStatus status) {
         Order order = orderService.updateOrderStatus(id, status);
         return order != null ? ResponseEntity.ok(order) : ResponseEntity.notFound().build();
     }

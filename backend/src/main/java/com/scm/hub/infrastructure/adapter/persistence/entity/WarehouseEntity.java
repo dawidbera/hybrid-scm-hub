@@ -19,10 +19,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WarehouseEntity {
+    /** Primary key for the warehouse */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /** Descriptive name of the warehouse */
     private String name;
+
+    /** Physical or geographical location details */
     private String location;
 }

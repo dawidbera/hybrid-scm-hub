@@ -89,11 +89,6 @@ public class InventoryController {
             @RequestParam(required = false) String query,
             @RequestParam(required = false) UUID warehouseId,
             @RequestParam(required = false, defaultValue = "0") Integer minQuantity) {
-        // This would require additional repository methods for advanced search
-        // For now, return all stocks (placeholder implementation)
-        return ResponseEntity.ok(inventoryService.getAllWarehouses().stream()
-                .flatMap(w -> inventoryService.getStockByWarehouse(w.getId()).stream())
-                .filter(s -> s.getQuantity() >= minQuantity)
-                .toList());
+        return ResponseEntity.ok(inventoryService.searchStock(query, warehouseId, minQuantity));
     }
 }

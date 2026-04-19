@@ -4,6 +4,7 @@ import com.scm.hub.infrastructure.adapter.persistence.entity.StockEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 
@@ -26,4 +27,12 @@ public interface StockRepository extends JpaRepository<StockEntity, UUID> {
      * @return A list of stock entities.
      */
     List<StockEntity> findByProductId(UUID productId);
+
+    /**
+     * Finds a stock record for a specific product in a specific warehouse.
+     * @param productId The product UUID.
+     * @param warehouseId The warehouse UUID.
+     * @return An optional stock entity.
+     */
+    Optional<StockEntity> findByProductIdAndWarehouseId(UUID productId, UUID warehouseId);
 }

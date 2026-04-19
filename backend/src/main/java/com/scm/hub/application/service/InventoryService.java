@@ -79,6 +79,11 @@ public class InventoryService {
         if (quantity < 0) {
             throw new IllegalArgumentException("Stock quantity cannot be negative");
         }
+        inventoryPort.findProductById(productId).orElseThrow(
+                () -> new IllegalArgumentException("Product not found: " + productId));
+        inventoryPort.findWarehouseById(warehouseId).orElseThrow(
+                () -> new IllegalArgumentException("Warehouse not found: " + warehouseId));
+
         Stock stock = Stock.builder()
                 .productId(productId)
                 .warehouseId(warehouseId)
@@ -97,5 +102,38 @@ public class InventoryService {
      */
     public List<Stock> getStockByWarehouse(UUID warehouseId) {
         return inventoryPort.findStockByWarehouse(warehouseId);
+    }
+
+    /**
+     * Reduces stock quantity for a specific product in a warehouse.
+     * Behavior: Retrieves current stock, reduces by the specified amount, and saves the update.
+     * @param productId The ID of the product.
+     * @param warehouseId The ID of the warehouse.
+     * @param quantityToReduce The amount to reduce. Must be positive.
+     * @return The updated stock record.
+     * @throws IllegalArgumentException if insufficient stock or invalid parameters.
+     */
+    public Stock reduceStock(UUID productId, UUID warehouseId, Integer quantityToReduce) {
+        if (quantityToReduce <= 0) {
+            throw new IllegalArgumentException("Quantity to reduce must be positive");
+        }
+        Stock currentStock = inventoryPort.findStockByProductAndWarehouse(productId, warehouseId)
+                .orElseThrow(() -> new IllegalArgumentException("Stock not found for product and warehouse"));
+        if (currentStock.getQuantity() < quantityToReduce) {
+            throw new IllegalArgumentException("Insufficient stock: available " + currentStock.getQuantity() + ", requested " + quantityToReduce);
+        }
+        int newQuantity = currentStock.getQuantity() - quantityToReduce;
+        return updateStock(productId, warehouseId, newQuantity);
+    }
+
+    /**
+     * Searches inventory records based on product metadata and warehouse filters.
+     * @param query Optional SKU or product name filter.
+     * @param warehouseId Optional warehouse filter.
+     * @param minQuantity Minimum stock quantity threshold.
+     * @return Matching stock records.
+     */
+    public List<Stock> searchStock(String query, UUID warehouseId, Integer minQuantity) {
+        return inventoryPort.searchStock(query, warehouseId, minQuantity);
     }
 }

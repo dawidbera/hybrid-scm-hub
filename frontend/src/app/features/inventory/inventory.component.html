@@ -52,4 +52,51 @@
       </div>
     </div>
   </div>
+
+  <div class="section">
+    <h3>Update Stock</h3>
+    <form (ngSubmit)="updateStock()" #stockForm="ngForm">
+      <select [(ngModel)]="selectedProductId" name="productId" required>
+        <option value="" disabled selected>Select Product</option>
+        <option *ngFor="let p of products" [value]="p.id">{{p.name}} ({{p.sku}})</option>
+      </select>
+      <select [(ngModel)]="selectedWarehouseId" name="warehouseId" required>
+        <option value="" disabled selected>Select Warehouse</option>
+        <option *ngFor="let w of warehouses$ | async" [value]="w.id">{{w.name}}</option>
+      </select>
+      <input [(ngModel)]="updateQuantity" name="quantity" type="number" min="0" placeholder="Quantity" required>
+      <button type="submit" [disabled]="!stockForm.valid">Update Stock</button>
+    </form>
+  </div>
+
+  <div class="section">
+    <h3>Advanced Stock Search</h3>
+    <form (ngSubmit)="searchStock()" #searchForm="ngForm">
+      <input [(ngModel)]="searchQuery" name="query" placeholder="Search by SKU or product name">
+      <select [(ngModel)]="filterWarehouseId" name="warehouseId">
+        <option value="">All Warehouses</option>
+        <option *ngFor="let w of warehouses$ | async" [value]="w.id">{{w.name}}</option>
+      </select>
+      <input [(ngModel)]="minQuantity" name="minQuantity" type="number" min="0" placeholder="Min Quantity">
+      <button type="submit">Search</button>
+    </form>
+    <table *ngIf="stockResults.length > 0">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Warehouse</th>
+          <th>Quantity</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stock of stockResults">
+          <td>{{stock.productName}} ({{stock.productSku}})</td>
+          <td>{{stock.warehouseName}}</td>
+          <td>{{stock.quantity}}</td>
+          <td>{{stock.lastUpdated | date}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

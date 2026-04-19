@@ -2,13 +2,23 @@ import { createReducer, on } from '@ngrx/store';
 import { Warehouse, Stock } from '../../core/models/inventory.model';
 import * as InventoryActions from './inventory.actions';
 
+/**
+ * Interface representing the structure of the inventory state.
+ */
 export interface InventoryState {
+  /** List of all loaded warehouses */
   warehouses: Warehouse[];
+  /** List of stock levels for the currently selected context */
   stocks: Stock[];
+  /** Loading status indicator */
   loading: boolean;
+  /** Error object if an operation fails */
   error: any;
 }
 
+/**
+ * Initial state for the inventory feature.
+ */
 export const initialState: InventoryState = {
   warehouses: [],
   stocks: [],
@@ -16,6 +26,9 @@ export const initialState: InventoryState = {
   error: null
 };
 
+/**
+ * Reducer for managing inventory state transitions.
+ */
 export const inventoryReducer = createReducer(
   initialState,
   on(InventoryActions.loadWarehouses, state => ({

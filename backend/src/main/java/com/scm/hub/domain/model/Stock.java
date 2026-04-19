@@ -23,9 +23,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Stock {
+    /** Unique identifier for the stock record */
     private UUID id;
+    /** ID of the product associated with this stock */
     private UUID productId;
+    /** ID of the warehouse where this stock is physically located */
     private UUID warehouseId;
+    /** Current available quantity of the product */
     private Integer quantity;
+    /** Timestamp of the last stock level adjustment */
     private LocalDateTime lastUpdated;
 }

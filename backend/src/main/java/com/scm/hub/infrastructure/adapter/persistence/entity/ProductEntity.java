@@ -26,14 +26,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductEntity {
+    /** Primary key for the product */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /** Unique Stock Keeping Unit identifier */
     @Column(unique = true, nullable = false)
     private String sku;
 
+    /** Display name of the product */
     private String name;
+
+    /** Textual description of the product */
     private String description;
+
+    /** Default selling price */
     private BigDecimal basePrice;
 }

@@ -75,9 +75,26 @@ public interface InventoryPort {
     List<Stock> findStockByWarehouse(UUID warehouseId);
 
     /**
+     * Searches stock records by product query and optional warehouse filters.
+     * @param query Optional product SKU or name to search.
+     * @param warehouseId Optional warehouse filter.
+     * @param minQuantity Minimum quantity threshold.
+     * @return A filtered list of stock records.
+     */
+    List<Stock> searchStock(String query, UUID warehouseId, Integer minQuantity);
+
+    /**
      * Finds all stock records for a specific product across all warehouses.
      * @param productId The product UUID. Must not be null.
      * @return A list of stock records for the product, or empty list if the product is not in any warehouse.
      */
     List<Stock> findStockByProduct(UUID productId);
+
+    /**
+     * Finds a specific stock record for a product in a warehouse.
+     * @param productId The product UUID. Must not be null.
+     * @param warehouseId The warehouse UUID. Must not be null.
+     * @return An Optional containing the stock if found, or empty if not found.
+     */
+    Optional<Stock> findStockByProductAndWarehouse(UUID productId, UUID warehouseId);
 }

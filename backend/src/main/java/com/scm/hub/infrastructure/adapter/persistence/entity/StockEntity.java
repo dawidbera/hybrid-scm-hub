@@ -26,17 +26,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockEntity {
+    /** Primary key for the stock record */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /** ID of the product this stock belongs to */
     private UUID productId;
+
+    /** ID of the warehouse where the stock is stored */
     private UUID warehouseId;
     
+    /** Current quantity available */
     private Integer quantity;
     
+    /** Timestamp of the last quantity update */
     private LocalDateTime lastUpdated;
 
+    /** Version field for JPA optimistic locking */
     @Version
     private Long version;
 }

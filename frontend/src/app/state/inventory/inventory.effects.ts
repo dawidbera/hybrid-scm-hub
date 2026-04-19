@@ -6,8 +6,15 @@ import * as InventoryActions from './inventory.actions';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
+/**
+ * Effects for handling side-effects related to inventory state.
+ * Orchestrates calls to InventoryService and dispatches corresponding actions.
+ */
 @Injectable()
 export class InventoryEffects {
+  /**
+   * Effect to handle loading warehouses.
+   */
   loadWarehouses$ = createEffect(() =>
     this.actions$.pipe(
       ofType(InventoryActions.loadWarehouses),
@@ -20,6 +27,9 @@ export class InventoryEffects {
     )
   );
 
+  /**
+   * Effect to handle loading stock levels for a warehouse.
+   */
   loadStock$ = createEffect(() =>
     this.actions$.pipe(
       ofType(InventoryActions.loadStock),
@@ -32,6 +42,9 @@ export class InventoryEffects {
     )
   );
 
+  /**
+   * Effect to handle updating stock levels.
+   */
   updateStock$ = createEffect(() =>
     this.actions$.pipe(
       ofType(InventoryActions.updateStock),

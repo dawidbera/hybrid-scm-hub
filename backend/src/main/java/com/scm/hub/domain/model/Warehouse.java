@@ -22,7 +22,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Warehouse {
+    /** Unique identifier for the warehouse */
     private UUID id;
+    /** Human-readable name of the warehouse facility */
     private String name;
+    /** Geographical or physical location details of the warehouse */
     private String location;
 }

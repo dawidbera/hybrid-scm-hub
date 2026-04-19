@@ -23,9 +23,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
+    /** Unique identifier for the product */
     private UUID id;
+    /** Stock Keeping Unit, a unique business identifier for the product */
     private String sku;
+    /** Descriptive name of the product */
     private String name;
+    /** Detailed textual description of the product */
     private String description;
+    /** Standard catalog price of the product */
     private BigDecimal basePrice;
 }

@@ -1,0 +1,38 @@
+/* Orders component styles */
+.orders-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.orders-container h2,
+.orders-container h3 {
+  margin-bottom: 1rem;
+}
+
+.order-items {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.order-items select,
+.order-items input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td, th {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+}
+
+button {
+  margin-right: 0.5rem;
+}

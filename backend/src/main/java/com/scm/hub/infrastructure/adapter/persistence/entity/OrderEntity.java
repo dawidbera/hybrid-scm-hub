@@ -21,16 +21,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderEntity {
+    /** Primary key for the order */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /** Name of the customer who placed the order */
     private String customerName;
-    private String status; // Created, Processing, Shipped
 
+    /** Lifecycle status of the order (e.g., Created, Processing, Shipped) */
+    private String status;
+
+    /** Collection of items belonging to this order, handled with lazy loading */
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItemEntity> items;
 
+    /** Timestamp of record creation */
     private LocalDateTime createdAt;
+
+    /** Timestamp of the last record update */
     private LocalDateTime updatedAt;
 }

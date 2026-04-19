@@ -1,0 +1,49 @@
+<div class="orders-container">
+  <h2>Order Management</h2>
+
+  <section class="create-order">
+    <h3>Create Order</h3>
+    <form (ngSubmit)="submitOrder()" #orderForm="ngForm">
+      <input [(ngModel)]="newOrder.customerName" name="customerName" placeholder="Customer Name" required>
+
+      <div class="order-items" *ngFor="let item of newOrder.items; let i = index">
+        <select [(ngModel)]="item.productId" name="product-{{ i }}" required>
+          <option value="" disabled>Select product</option>
+          <option *ngFor="let p of products" [value]="p.id">{{ p.name }} ({{ p.sku }})</option>
+        </select>
+        <select [(ngModel)]="item.warehouseId" name="warehouse-{{ i }}" required>
+          <option value="" disabled>Select warehouse</option>
+          <option *ngFor="let w of warehouses" [value]="w.id">{{ w.name }}</option>
+        </select>
+        <input [(ngModel)]="item.quantity" name="quantity-{{ i }}" type="number" min="1" required>
+        <input [(ngModel)]="item.price" name="price-{{ i }}" type="number" min="0" step="0.01" required>
+        <button type="button" (click)="removeOrderItem(i)" *ngIf="newOrder.items.length > 1">Remove</button>
+      </div>
+
+      <button type="button" (click)="addOrderItem()">Add Item</button>
+      <button type="submit" [disabled]="!orderForm.form.valid">Submit Order</button>
+    </form>
+  </section>
+
+  <section class="order-list">
+    <h3>Existing Orders</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Status</th>
+          <th>Total</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.customerName }}</td>
+          <td>{{ order.status }}</td>
+          <td>{{ order.total }}</td>
+          <td>{{ order.createdAt | date:'medium' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>

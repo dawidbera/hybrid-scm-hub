@@ -19,15 +19,22 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemEntity {
+    /** Primary key for the order item */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /** Reference to the parent order entity */
     @ManyToOne
     @JoinColumn(name = "order_id")
     private OrderEntity order;
 
+    /** ID of the product ordered */
     private UUID productId;
+
+    /** Number of units ordered */
     private Integer quantity;
+
+    /** Unit price at the time of order */
     private Double price;
 }

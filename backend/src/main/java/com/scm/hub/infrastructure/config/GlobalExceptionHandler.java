@@ -17,6 +17,12 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Handles IllegalArgumentException and returns a Bad Request response.
+     * @param ex The exception instance.
+     * @param request The current web request.
+     * @return ResponseEntity containing the error details.
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(
             IllegalArgumentException ex, WebRequest request) {
@@ -29,6 +35,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles all unexpected exceptions and returns an Internal Server Error response.
+     * @param ex The exception instance.
+     * @param request The current web request.
+     * @return ResponseEntity containing the error details.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGlobalException(
             Exception ex, WebRequest request) {

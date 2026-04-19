@@ -13,13 +13,15 @@ import { AuditTrailComponent } from './features/audit-trail/audit-trail.componen
 import { inventoryReducer } from './state/inventory/inventory.reducer';
 import { InventoryEffects } from './state/inventory/inventory.effects';
 import { InventoryComponent } from './features/inventory/inventory.component';
+import { OrdersComponent } from './features/orders/orders.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     AuditTrailComponent,
-    InventoryComponent
+    InventoryComponent,
+    OrdersComponent
   ],
   imports: [
     BrowserModule,

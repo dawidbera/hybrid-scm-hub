@@ -38,7 +38,7 @@ A comprehensive solution for bridging On-Premise warehouse operations with Cloud
 
 ## System Architecture & Request Flow
 
-The system follows the **Hexagonal Architecture** (Ports & Adapters) to ensure business logic remains decoupled from external infrastructure.
+The system follows the **Hexagonal Architecture** (Ports & Adapters) to ensure business logic remains decoupled from external infrastructure. While technically a modular monolith, the services are designed with microservice principles in mind (Inventory, Order, Sync Log).
 
 ```mermaid
 graph TD
@@ -54,8 +54,12 @@ graph TD
         WS_Server[WebSocket Server Adapter]
         
         subgraph "Application & Domain"
-            Service[Inventory Service]
-            Domain[Product/Stock Models]
+            direction LR
+            InventorySvc[Inventory Service]
+            OrderSvc[Order Service]
+            SyncSvc[Sync Log Service]
+            AuthSvc[Auth Service]
+            Domain[Domain Models]
         end
         
         Persist[Persistence Adapter]
@@ -69,24 +73,39 @@ graph TD
 
     %% Flow
     UI -->|REST API| REST
-    REST --> Service
-    Service --> Domain
-    Service --> Persist
+    REST --> AuthSvc
+    REST --> InventorySvc
+    REST --> OrderSvc
+    REST --> SyncSvc
+    
+    OrderSvc -->|Reduce Stock| InventorySvc
+    
+    InventorySvc --> Domain
+    OrderSvc --> Domain
+    SyncSvc --> Domain
+    
+    InventorySvc --> Persist
+    OrderSvc --> Persist
+    SyncSvc --> Persist
+    
     Persist --> DB_Local
     
     DB_Local -.->|Change Capture| Sync
     Sync -->|Push| DB_Cloud
     
-    Service -.->|Updates| WS_Server
+    InventorySvc -.->|Updates| WS_Server
     WS_Server -.->|Push Notifications| WS_Client
     WS_Client --> Store
     Store --> UI
 ```
 
 ### Request Flow Overview:
-1.  **User Interaction:** The user performs an action in the Angular UI.
-2.  **API Request:** The Frontend sends a REST request to the Backend.
-3.  **Domain Processing:** The Application Service invokes Domain logic to validate and process the change.
-4.  **Persistence:** The Persistence Adapter saves the state to the **On-Premise Database**.
-5.  **Synchronization:** The **Sync Engine** (via Spring Integration) detects the local change and asynchronously synchronizes it to the **Cloud Database**.
-6.  **Real-time Updates:** Successful changes trigger WebSocket notifications, allowing the UI to reflect updates across all connected clients instantly.
+1.  **User Interaction:** The user performs an action in the Angular UI (e.g., login, placing an order, or checking inventory).
+2.  **API Request:** The Frontend sends a REST request to the Backend through the `REST Controller Adapter`.
+3.  **Domain Processing:**
+    *   **Authentication:** Handled by the `Auth Service` using JWT.
+    *   **Inventory Requests:** Handled directly by the `Inventory Service`.
+    *   **Order Requests:** Handled by the `Order Service`, which orchestrates with the `Inventory Service` to ensure stock availability and reduction.
+4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL).
+5.  **Synchronization:** The **Sync Engine** (via Spring Integration) detects local DB changes and asynchronously synchronizes them to the **Cloud Database**.
+6.  **Real-time Updates:** Successful inventory changes trigger `WebSocket` notifications via the `WebSocket Server Adapter`, allowing the UI to reflect updates across all connected clients instantly.

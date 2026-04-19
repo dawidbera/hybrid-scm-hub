@@ -22,7 +22,9 @@
     "@ngrx/entity": "^16.3.0",
     "@ngrx/store": "^16.3.0",
     "@ngrx/store-devtools": "^16.3.0",
+    "@stomp/stompjs": "^7.0.0",
     "rxjs": "~7.8.0",
+    "sockjs-client": "^1.6.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
@@ -31,6 +33,8 @@
     "@angular/cli": "^16.2.16",
     "@angular/compiler-cli": "^16.2.0",
     "@types/jasmine": "~4.3.0",
+    "@types/sockjs-client": "^1.5.4",
+    "cypress": "^15.14.0",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

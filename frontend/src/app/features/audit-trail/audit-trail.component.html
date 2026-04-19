@@ -1,4 +1,21 @@
 <h2>Audit Trail</h2>
-<ul>
-  <li *ngFor="let log of auditLogs">{{ log }}</li>
-</ul>
+<table>
+  <thead>
+    <tr>
+      <th>Entity</th>
+      <th>Entity ID</th>
+      <th>Status</th>
+      <th>Error</th>
+      <th>Synced At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let log of auditLogs">
+      <td>{{ log.entityName }}</td>
+      <td>{{ log.entityId }}</td>
+      <td>{{ log.status }}</td>
+      <td>{{ log.errorMessage || 'OK' }}</td>
+      <td>{{ log.syncTimestamp | date:'medium' }}</td>
+    </tr>
+  </tbody>
+</table>

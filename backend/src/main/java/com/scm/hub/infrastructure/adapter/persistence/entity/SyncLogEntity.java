@@ -20,13 +20,26 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SyncLogEntity {
+    /** Primary key for the sync log */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /** Name of the entity type being synchronized */
     private String entityName;
+
+    /** ID of the specific entity instance */
     private UUID entityId;
-    private String status; // PENDING, SUCCESS, FAILURE
+
+    /** Synchronization status (e.g., PENDING, SUCCESS, FAILURE) */
+    private String status;
+
+    /** Error message if synchronization failed */
     private String errorMessage;
+
+    /** Timestamp when the sync operation was initiated or logged */
     private LocalDateTime syncTimestamp;
+
+    /** Number of attempts made to synchronize this specific record */
+    private Integer retryCount;
 }

@@ -30,4 +30,16 @@ export class OrderService {
   getOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(this.apiUrl);
   }
+
+  /**
+   * Updates the status of an existing order.
+   * @param orderId The ID of the order to update.
+   * @param status The new status (CREATED, PROCESSING, SHIPPED).
+   * @returns An Observable of the updated Order object.
+   */
+  updateOrderStatus(orderId: string, status: string): Observable<Order> {
+    return this.http.put<Order>(`${this.apiUrl}/${orderId}/status`, null, {
+      params: { status }
+    });
+  }
 }

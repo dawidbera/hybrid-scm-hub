@@ -83,4 +83,15 @@ export class OrdersComponent implements OnInit {
       this.loadOrders();
     });
   }
+
+  /**
+   * Updates the status of an existing order.
+   * @param orderId The ID of the order.
+   * @param status The new status.
+   */
+  updateStatus(orderId: string, status: string): void {
+    this.orderService.updateOrderStatus(orderId, status).subscribe(() => {
+      this.loadOrders();
+    });
+  }
 }

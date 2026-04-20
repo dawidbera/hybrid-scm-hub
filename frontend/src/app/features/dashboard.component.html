@@ -5,11 +5,23 @@
   </header>
 
   <main>
+    <section class="filters">
+      <div class="filter-group">
+        <label for="search">Search Product/SKU</label>
+        <input id="search" type="text" [(ngModel)]="searchQuery" (input)="onFilterChange()" placeholder="Enter SKU or Name...">
+      </div>
+      <div class="filter-group">
+        <label for="minQty">Min Quantity</label>
+        <input id="minQty" type="number" [(ngModel)]="minQuantity" (input)="onFilterChange()" placeholder="0">
+      </div>
+    </section>
+
     <section class="warehouse-selector">
       <h3>Select Warehouse</h3>
       <div class="warehouse-grid">
         <div *ngFor="let w of warehouses$ | async" 
              class="warehouse-card" 
+             [class.active]="w.id === selectedWarehouseId"
              (click)="onWarehouseSelect(w.id!)">
           <h4>{{w.name}}</h4>
           <p>{{w.location}}</p>

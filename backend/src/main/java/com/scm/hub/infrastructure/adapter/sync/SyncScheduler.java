@@ -20,6 +20,11 @@ import java.util.List;
 @EnableScheduling
 @RequiredArgsConstructor
 @Slf4j
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = "sync.enabled", 
+    havingValue = "true", 
+    matchIfMissing = true
+)
 public class SyncScheduler {
 
     private final SyncLogRepository syncLogRepository;
@@ -29,9 +34,9 @@ public class SyncScheduler {
     /**
      * Periodically executes the synchronization task.
      * Finds all sync logs with a 'PENDING' or 'FAILURE' status and delegates their synchronization to the SyncService.
-     * Runs with a fixed delay of 10 seconds between the end of the last execution and the start of the next.
+     * The delay is configurable via 'sync.interval-ms' property.
      */
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelayString = "${sync.interval-ms:10000}")
     public void runSync() {
         log.info("Starting synchronization process...");
         syncLogRepository.findByStatusIn(List.of("PENDING", "FAILURE")).forEach(syncService::syncEntity);

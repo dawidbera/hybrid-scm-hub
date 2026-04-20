@@ -24,10 +24,11 @@ export const loadWarehousesFailure = createAction(
 
 /**
  * Action to initiate loading of stock levels for a specific warehouse.
+ * Supports optional filters for search query and minimum quantity.
  */
 export const loadStock = createAction(
   '[Inventory] Load Stock',
-  props<{ warehouseId: string }>()
+  props<{ warehouseId?: string; query?: string; minQuantity?: number }>()
 );
 
 /**

@@ -22,6 +22,10 @@ export class DashboardComponent implements OnInit {
   stocks$: Observable<Stock[]>;
   /** ID of the currently selected warehouse for filtering */
   selectedWarehouseId = '';
+  /** Search query for product name or SKU */
+  searchQuery = '';
+  /** Minimum quantity filter */
+  minQuantity?: number;
   /** Observable stream indicating if data is currently being loaded */
   loading$: Observable<boolean>;
 
@@ -39,13 +43,25 @@ export class DashboardComponent implements OnInit {
    */
   ngOnInit(): void {
     this.store.dispatch(InventoryActions.loadWarehouses());
+    this.loadStock();
 
     // Listen for real-time updates to refresh stock levels if the selected warehouse is affected
     this.realtimeService.getUpdates().subscribe(update => {
       if (update && update.warehouseId === this.selectedWarehouseId) {
-        this.store.dispatch(InventoryActions.loadStock({ warehouseId: this.selectedWarehouseId }));
+        this.loadStock();
       }
     });
+  }
+
+  /**
+   * Dispatches the loadStock action with current filters.
+   */
+  loadStock(): void {
+    this.store.dispatch(InventoryActions.loadStock({ 
+      warehouseId: this.selectedWarehouseId || undefined, 
+      query: this.searchQuery, 
+      minQuantity: this.minQuantity 
+    }));
   }
 
   /**
@@ -53,7 +69,14 @@ export class DashboardComponent implements OnInit {
    * @param warehouseId The ID of the selected warehouse.
    */
   onWarehouseSelect(warehouseId: string): void {
-    this.selectedWarehouseId = warehouseId;
-    this.store.dispatch(InventoryActions.loadStock({ warehouseId }));
+    this.selectedWarehouseId = this.selectedWarehouseId === warehouseId ? '' : warehouseId;
+    this.loadStock();
+  }
+
+  /**
+   * Handles changes in the search query or minimum quantity filter.
+   */
+  onFilterChange(): void {
+    this.loadStock();
   }
 }

@@ -39,9 +39,15 @@
       <tbody>
         <tr *ngFor="let order of orders">
           <td>{{ order.customerName }}</td>
-          <td>{{ order.status }}</td>
-          <td>{{ order.total }}</td>
+          <td>
+            <span class="status-badge" [attr.data-status]="order.status">{{ order.status }}</span>
+          </td>
+          <td>{{ order.total | currency }}</td>
           <td>{{ order.createdAt | date:'medium' }}</td>
+          <td>
+            <button *ngIf="order.status === 'CREATED'" (click)="updateStatus(order.id!, 'PROCESSING')">Process</button>
+            <button *ngIf="order.status === 'PROCESSING'" (click)="updateStatus(order.id!, 'SHIPPED')">Ship</button>
+          </td>
         </tr>
       </tbody>
     </table>

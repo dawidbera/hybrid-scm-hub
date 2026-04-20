@@ -75,6 +75,7 @@ public class InventoryService {
      * @return The updated stock record.
      * @throws IllegalArgumentException if quantity is negative.
      */
+    @org.springframework.transaction.annotation.Transactional
     public Stock updateStock(UUID productId, UUID warehouseId, Integer quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException("Stock quantity cannot be negative");
@@ -113,6 +114,7 @@ public class InventoryService {
      * @return The updated stock record.
      * @throws IllegalArgumentException if insufficient stock or invalid parameters.
      */
+    @org.springframework.transaction.annotation.Transactional
     public Stock reduceStock(UUID productId, UUID warehouseId, Integer quantityToReduce) {
         if (quantityToReduce <= 0) {
             throw new IllegalArgumentException("Quantity to reduce must be positive");

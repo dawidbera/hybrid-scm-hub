@@ -29,13 +29,14 @@ export class InventoryEffects {
 
   /**
    * Effect to handle loading stock levels for a warehouse.
+   * Uses searchStock to support filtering by warehouse, query, and minimum quantity.
    */
   loadStock$ = createEffect(() =>
     this.actions$.pipe(
       ofType(InventoryActions.loadStock),
       mergeMap(action =>
-        this.inventoryService.getStockByWarehouse(action.warehouseId).pipe(
-          map(stocks => InventoryActions.loadStockSuccess({ stocks })),
+        this.inventoryService.searchStock(action.query || '', action.warehouseId, action.minQuantity).pipe(
+          map(stocks => InventoryActions.loadStockSuccess({ stocks: stocks as Stock[] })),
           catchError(error => of(InventoryActions.loadStockFailure({ error })))
         )
       )

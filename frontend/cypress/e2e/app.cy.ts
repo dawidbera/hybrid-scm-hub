@@ -5,7 +5,7 @@ describe('Hybrid SCM Hub E2E Tests', () => {
   });
 
   it('should load the application', () => {
-    cy.contains('Hybrid SCM Hub').should('be.visible');
+    cy.contains('Hybrid-Cloud SCM').should('be.visible');
   });
 
   it('should navigate to inventory management', () => {
@@ -15,21 +15,27 @@ describe('Hybrid SCM Hub E2E Tests', () => {
   });
 
   it('should create a product', () => {
+    const sku = `TEST-${Date.now()}`;
     cy.contains('Inventory').click();
-    cy.get('input[name="sku"]').type('TEST001');
-    cy.get('input[name="name"]').type('Test Product');
-    cy.get('input[name="description"]').type('Test Description');
-    cy.get('input[name="basePrice"]').type('10.99');
-    cy.get('button[type="submit"]').contains('Add Product').click();
-    cy.contains('TEST001').should('be.visible');
+    cy.contains('h3', 'Add Product').parent().within(() => {
+      cy.get('input[name="sku"]').type(sku);
+      cy.get('input[name="name"]').type('Test Product');
+      cy.get('input[name="description"]').type('Test Description');
+      cy.get('input[name="basePrice"]').clear().type('10.99');
+      cy.get('button[type="submit"]').contains('Add Product').click();
+    });
+    cy.contains(sku).should('be.visible');
   });
 
   it('should create a warehouse', () => {
+    const name = `Warehouse-${Date.now()}`;
     cy.contains('Inventory').click();
-    cy.get('input[name="name"]').type('Test Warehouse');
-    cy.get('input[name="location"]').type('Test Location');
-    cy.get('button[type="submit"]').contains('Add Warehouse').click();
-    cy.contains('Test Warehouse').should('be.visible');
+    cy.contains('h3', 'Add Warehouse').parent().within(() => {
+      cy.get('input[name="name"]').type(name);
+      cy.get('input[name="location"]').type('Test Location');
+      cy.get('button[type="submit"]').contains('Add Warehouse').click();
+    });
+    cy.contains(name).should('be.visible');
   });
 
   it('should navigate to orders', () => {

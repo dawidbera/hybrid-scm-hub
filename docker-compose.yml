@@ -1,7 +1,6 @@
 # Docker Compose file to orchestrate the infrastructure for Hybrid-Cloud SCM Hub.
 # This setup provides two PostgreSQL instances to simulate a hybrid IT landscape.
 
-version: '3.8'
 services:
   # On-Premise Database instance.
   # Represents the local database running in a warehouse or remote facility.

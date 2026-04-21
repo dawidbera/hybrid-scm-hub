@@ -16,7 +16,7 @@ A comprehensive solution for bridging On-Premise warehouse operations with Cloud
 ## How to Run
 1.  **Start Databases:**
     ```bash
-    docker-compose up -d
+    docker compose up -d
     ```
 2.  **Run Backend:**
     ```bash
@@ -29,6 +29,37 @@ A comprehensive solution for bridging On-Premise warehouse operations with Cloud
     npm install
     npm start
     ```
+
+## Testing
+
+### 1. Backend Tests
+Unit and integration tests (using Testcontainers). Requires Docker for integration tests.
+```bash
+cd backend
+mvn test
+```
+
+### 2. Frontend Unit Tests
+Karma and Jasmine tests.
+```bash
+cd frontend
+# Run in watch mode
+npm test
+# Run one-time (headless)
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+### 3. Frontend E2E Tests (Cypress)
+Requires both Backend and Frontend servers to be running.
+```bash
+# In separate terminal windows:
+# 1. Start Backend: cd backend && mvn spring-boot:run
+# 2. Start Frontend: cd frontend && npm start
+
+# Then run Cypress:
+cd frontend
+npx cypress run
+```
 
 ## Key Features
 - **Real-time Inventory Tracking:** Live updates via WebSockets (simulated).

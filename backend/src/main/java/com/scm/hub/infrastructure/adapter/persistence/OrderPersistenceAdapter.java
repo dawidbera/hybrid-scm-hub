@@ -46,7 +46,7 @@ public class OrderPersistenceAdapter implements OrderPort {
         SyncLogEntity syncLog = SyncLogEntity.builder()
                 .entityName("Order")
                 .entityId(entity.getId())
-                .status("PENDING")
+                .status(OrderStatus.PENDING)
                 .build();
         syncLogRepository.save(syncLog);
 
@@ -95,7 +95,7 @@ public class OrderPersistenceAdapter implements OrderPort {
             SyncLogEntity syncLog = SyncLogEntity.builder()
                     .entityName("Order")
                     .entityId(entity.getId())
-                    .status("PENDING")
+                    .status(OrderStatus.PENDING)
                     .syncTimestamp(java.time.LocalDateTime.now())
                     .build();
             syncLogRepository.save(syncLog);

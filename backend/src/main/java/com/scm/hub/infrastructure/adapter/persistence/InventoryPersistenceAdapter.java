@@ -1,5 +1,6 @@
 package com.scm.hub.infrastructure.adapter.persistence;
 
+import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.domain.model.Product;
 import com.scm.hub.domain.model.Stock;
 import com.scm.hub.domain.model.Warehouse;
@@ -47,7 +48,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
         SyncLogEntity syncLog = SyncLogEntity.builder()
                 .entityName(entityName)
                 .entityId(entityId)
-                .status("PENDING")
+                .status(OrderStatus.PENDING)
                 .syncTimestamp(LocalDateTime.now())
                 .build();
         syncLogRepository.save(syncLog);

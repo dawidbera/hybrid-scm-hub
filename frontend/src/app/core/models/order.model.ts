@@ -1,7 +1,7 @@
 /**
- * Possible lifecycle statuses for an order.
+ * Possible lifecycle and synchronization statuses.
  */
-export type OrderStatus = 'CREATED' | 'PROCESSING' | 'SHIPPED';
+export type OrderStatus = 'CREATED' | 'PROCESSING' | 'SHIPPED' | 'PENDING' | 'SUCCESS' | 'FAILURE';
 
 /**
  * Represents an individual item within an order.

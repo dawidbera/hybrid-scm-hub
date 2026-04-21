@@ -1,3 +1,5 @@
+import { OrderStatus } from './order.model';
+
 /**
  * Represents a synchronization log entry between On-Premise and Cloud environments.
  */
@@ -8,8 +10,8 @@ export interface AuditLog {
   entityName: string;
   /** Unique identifier of the specific entity instance */
   entityId: string;
-  /** Current status of the synchronization (e.g., 'SUCCESS', 'FAILURE') */
-  status: string;
+  /** Current status of the synchronization */
+  status: OrderStatus;
   /** Detailed error message if the synchronization failed */
   errorMessage?: string;
   /** Timestamp when the synchronization event occurred */

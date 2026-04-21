@@ -1,5 +1,6 @@
 package com.scm.hub.infrastructure.adapter.sync;
 
+import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.infrastructure.adapter.persistence.entity.SyncLogEntity;
 import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.SyncLogRepository;
 import com.scm.hub.infrastructure.adapter.rest.WebSocketController;
@@ -65,7 +66,7 @@ public class SyncService {
      */
     @Transactional(value = "onPremTransactionManager")
     public void updateSyncLogStatus(SyncLogEntity syncLog, boolean success, int attempt, String error) {
-        syncLog.setStatus(success ? "SUCCESS" : "FAILURE");
+        syncLog.setStatus(success ? OrderStatus.SUCCESS : OrderStatus.FAILURE);
         syncLog.setSyncTimestamp(LocalDateTime.now());
         syncLog.setRetryCount(attempt - 1);
         syncLog.setErrorMessage(error);

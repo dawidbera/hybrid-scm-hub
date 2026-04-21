@@ -29,8 +29,8 @@ public class SyncLog {
     private String entityName;
     /** Unique identifier of the specific entity instance being tracked */
     private UUID entityId;
-    /** Current status of the sync operation (e.g., "SUCCESS", "FAILURE") */
-    private String status;
+    /** Current status of the sync operation */
+    private OrderStatus status;
     /** Detailed error message if the synchronization failed */
     private String errorMessage;
     /** Timestamp when the synchronization event was logged */

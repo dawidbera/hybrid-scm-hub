@@ -1,5 +1,6 @@
 package com.scm.hub.infrastructure.adapter.sync;
 
+import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.infrastructure.adapter.persistence.entity.ProductEntity;
 import com.scm.hub.infrastructure.adapter.persistence.entity.SyncLogEntity;
 import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.ProductRepository;
@@ -77,7 +78,7 @@ class SyncIntegrationTest {
         SyncLogEntity syncLog = SyncLogEntity.builder()
                 .entityName("Product")
                 .entityId(product.getId())
-                .status("PENDING")
+                .status(OrderStatus.PENDING)
                 .syncTimestamp(LocalDateTime.now())
                 .build();
         syncLog = syncLogRepository.save(syncLog);
@@ -89,7 +90,7 @@ class SyncIntegrationTest {
         SyncLogEntity updatedLog = syncLogRepository.findById(syncLog.getId()).orElseThrow();
         assertThat(updatedLog.getStatus())
                 .withFailMessage("Sync failed with error: " + updatedLog.getErrorMessage())
-                .isEqualTo("SUCCESS");
+                .isEqualTo(OrderStatus.SUCCESS);
 
         ProductEntity cloudProduct = cloudEntityManager.find(ProductEntity.class, product.getId());
         assertThat(cloudProduct).isNotNull();

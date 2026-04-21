@@ -1,5 +1,6 @@
 package com.scm.hub.infrastructure.adapter.sync;
 
+import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.infrastructure.adapter.persistence.repository.onprem.SyncLogRepository;
 import com.scm.hub.infrastructure.config.SyncConfig;
 import lombok.RequiredArgsConstructor;
@@ -7,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class SyncScheduler {
     @Scheduled(fixedDelayString = "${sync.interval-ms:10000}")
     public void runSync() {
         log.info("Starting synchronization process...");
-        syncLogRepository.findByStatusIn(List.of("PENDING", "FAILURE")).forEach(syncService::syncEntity);
+        syncLogRepository.findByStatusIn(List.of(OrderStatus.PENDING, OrderStatus.FAILURE)).forEach(syncService::syncEntity);
         log.info("Synchronization process finished.");
     }
 }

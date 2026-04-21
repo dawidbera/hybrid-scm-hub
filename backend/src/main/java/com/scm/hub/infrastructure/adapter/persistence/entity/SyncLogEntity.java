@@ -1,5 +1,6 @@
 package com.scm.hub.infrastructure.adapter.persistence.entity;
 
+import com.scm.hub.domain.model.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +32,9 @@ public class SyncLogEntity {
     /** ID of the specific entity instance */
     private UUID entityId;
 
-    /** Synchronization status (e.g., PENDING, SUCCESS, FAILURE) */
-    private String status;
+    /** Synchronization status */
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     /** Error message if synchronization failed */
     private String errorMessage;

@@ -130,6 +130,67 @@ graph TD
     Store --> UI
 ```
 
+## Database Schema
+
+The following Entity Relationship Diagram (ERD) represents the data model used in the On-Premise database. This schema is mirrored (fully or partially) in the Cloud environment for analytics.
+
+```mermaid
+erDiagram
+    PRODUCT ||--o{ STOCK : "has"
+    WAREHOUSE ||--o{ STOCK : "stores"
+    ORDER ||--o{ ORDER_ITEM : "contains"
+    PRODUCT ||--o{ ORDER_ITEM : "ordered in"
+
+    PRODUCT {
+        uuid id PK
+        string sku UK
+        string name
+        string description
+        decimal basePrice
+    }
+
+    WAREHOUSE {
+        uuid id PK
+        string name
+        string location
+    }
+
+    STOCK {
+        uuid id PK
+        uuid productId FK
+        uuid warehouseId FK
+        int quantity
+        datetime lastUpdated
+        long version
+    }
+
+    ORDER {
+        uuid id PK
+        string customerName
+        string status
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    ORDER_ITEM {
+        uuid id PK
+        uuid orderId FK
+        uuid productId FK
+        int quantity
+        double price
+    }
+
+    SYNC_LOG {
+        uuid id PK
+        string entityName
+        uuid entityId
+        string status
+        string errorMessage
+        datetime syncTimestamp
+        int retryCount
+    }
+```
+
 ### Request Flow Overview:
 1.  **User Interaction:** The user performs an action in the Angular UI (e.g., login, placing an order, or checking inventory).
 2.  **API Request:** The Frontend sends a REST request to the Backend through the `REST Controller Adapter`.

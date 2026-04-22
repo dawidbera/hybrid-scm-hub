@@ -22,6 +22,13 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    /**
+     * Authenticates a user and generates a JWT token upon successful login.
+     * 
+     * @param request The login request containing username and password.
+     * @return A ResponseEntity containing the JWT token.
+     * @throws org.springframework.security.core.AuthenticationException if authentication fails.
+     */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -34,14 +41,33 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 
+    /**
+     * Data transfer object for login requests.
+     */
     public static class LoginRequest {
         private String username;
         private String password;
 
         // getters and setters
+        /**
+         * Gets the username for authentication.
+         * @return The username.
+         */
         public String getUsername() { return username; }
+        /**
+         * Sets the username for authentication.
+         * @param username The username to set.
+         */
         public void setUsername(String username) { this.username = username; }
+        /**
+         * Gets the password for authentication.
+         * @return The password.
+         */
         public String getPassword() { return password; }
+        /**
+         * Sets the password for authentication.
+         * @param password The password to set.
+         */
         public void setPassword(String password) { this.password = password; }
     }
 }

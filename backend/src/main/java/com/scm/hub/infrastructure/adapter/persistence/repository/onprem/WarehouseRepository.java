@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * Repository interface for managing WarehouseEntity in the On-Premise database.
+ * Repository interface for managing {@link WarehouseEntity} in the On-Premise database.
+ * Provides standard CRUD operations and custom query methods for warehouse-related data persistence.
  */
 @Repository
 public interface WarehouseRepository extends JpaRepository<WarehouseEntity, UUID> {

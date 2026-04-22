@@ -59,7 +59,11 @@ public class OrderMapper {
     }
 
     /**
-     * Helper method to convert an OrderItem domain model to its entity representation.
+     * Converts an OrderItem domain model to its entity representation.
+     * 
+     * @param item The domain model to convert.
+     * @param orderEntity The parent OrderEntity.
+     * @return The corresponding JPA entity.
      */
     private OrderItemEntity toItemEntity(OrderItem item, OrderEntity orderEntity) {
         return OrderItemEntity.builder()
@@ -72,7 +76,10 @@ public class OrderMapper {
     }
 
     /**
-     * Helper method to convert an OrderItemEntity to its domain model representation.
+     * Converts an OrderItemEntity to its domain model representation.
+     * 
+     * @param entity The JPA entity to convert.
+     * @return The corresponding domain model.
      */
     private OrderItem toItemDomain(OrderItemEntity entity) {
         return OrderItem.builder()

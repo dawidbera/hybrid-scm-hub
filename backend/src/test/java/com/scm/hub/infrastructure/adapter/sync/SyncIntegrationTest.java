@@ -18,8 +18,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = {

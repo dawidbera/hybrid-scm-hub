@@ -47,6 +47,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures CORS (Cross-Origin Resource Sharing) settings.
+     * Allows requests from any origin with common HTTP methods and all headers.
+     * @return CorsConfigurationSource instance.
+     */
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();

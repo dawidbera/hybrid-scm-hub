@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Repository interface for managing ProductEntity in the On-Premise database.
+ * Repository interface for managing {@link ProductEntity} in the On-Premise database.
+ * Supports standard CRUD operations and custom search functionality based on product SKU and name.
  */
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {

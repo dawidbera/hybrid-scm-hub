@@ -34,3 +34,15 @@ logging:
   level:
     org.springframework.integration: INFO
     org.hibernate.SQL: DEBUG
+
+# Actuator configuration for monitoring.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true

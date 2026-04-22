@@ -3,7 +3,7 @@
 A comprehensive solution for bridging On-Premise warehouse operations with Cloud analytics.
 
 ## Tech Stack
-- **Backend:** Java 21, Spring Boot 3.4, Hibernate, Spring Integration.
+- **Backend:** Java 21, Spring Boot 3.4, Hibernate, Spring Integration, **Spring Boot Actuator**.
 - **Frontend:** Angular 16, NgRx, SCSS, RxJS.
 - **Database:** 2x PostgreSQL (On-Prem & Cloud simulation).
 - **Architecture:** Hexagonal (Ports & Adapters).
@@ -66,6 +66,12 @@ npx cypress run
 - **Hybrid Sync Engine:** Automated data push from local to cloud instances.
 - **Hexagonal Design:** Decoupled domain logic for high maintainability.
 - **Optimistic Locking:** Robust concurrency handling for stock management.
+- **Health Monitoring:** Dedicated Actuator endpoints for tracking On-Prem and Cloud database connectivity.
+
+## Monitoring & Health Checks
+The application uses Spring Boot Actuator to provide production-ready monitoring.
+- **Health Endpoint:** `GET /actuator/health`
+- **Details:** The health check includes a custom `DatabaseHealthIndicator` that verifies connectivity to both the On-Premise and Cloud databases independently.
 
 ## System Architecture & Request Flow
 

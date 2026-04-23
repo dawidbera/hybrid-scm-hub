@@ -3,7 +3,7 @@
 A comprehensive solution for bridging On-Premise warehouse operations with Cloud analytics.
 
 ## Tech Stack
-- **Backend:** Java 21, Spring Boot 3.4, Hibernate, Spring Integration, **Spring Boot Actuator**.
+- **Backend:** Java 21, Spring Boot 3.4, Hibernate, **Spring Integration (JDBC)**, **Spring Retry**, Spring Boot Actuator.
 - **Frontend:** Angular 16, NgRx, SCSS, RxJS.
 - **Database:** 2x PostgreSQL (On-Prem & Cloud simulation).
 - **Architecture:** Hexagonal (Ports & Adapters).
@@ -91,8 +91,9 @@ npx cypress run
 ```
 
 ## Key Features
-- **Real-time Inventory Tracking:** Live updates via WebSockets (simulated).
-- **Hybrid Sync Engine:** Automated data push from local to cloud instances.
+- **Real-time Inventory Tracking:** Live updates via WebSockets.
+- **Message-Driven Sync Engine:** Robust data synchronization using Spring Integration and the **Transactional Outbox pattern**.
+- **Resilience & Reliability:** Automatic retries with **Exponential Backoff** to handle transient failures during cloud synchronization.
 - **Hexagonal Design:** Decoupled domain logic for high maintainability.
 - **Optimistic Locking:** Robust concurrency handling for stock management.
 - **Health Monitoring:** Dedicated Actuator endpoints for tracking On-Prem and Cloud database connectivity.
@@ -233,6 +234,6 @@ erDiagram
     *   **Authentication:** Handled by the `Auth Service` using JWT.
     *   **Inventory Requests:** Handled directly by the `Inventory Service`.
     *   **Order Requests:** Handled by the `Order Service`, which orchestrates with the `Inventory Service` to ensure stock availability and reduction.
-4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL).
-5.  **Synchronization:** The **Sync Engine** (via Spring Integration) detects local DB changes and asynchronously synchronizes them to the **Cloud Database**.
+4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL) and creates a `SyncLog` entry (Transactional Outbox).
+5.  **Synchronization:** The **Sync Engine** (via Spring Integration JDBC Polling) picks up pending logs and asynchronously synchronizes them to the **Cloud Database** with built-in retry logic.
 6.  **Real-time Updates:** Successful inventory changes trigger `WebSocket` notifications via the `WebSocket Server Adapter`, allowing the UI to reflect updates across all connected clients instantly.

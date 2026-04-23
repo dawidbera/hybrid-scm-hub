@@ -27,49 +27,31 @@ public class SyncService {
     private final SyncConfig syncConfig;
 
     /**
-     * Main sync method. Orchestrates the process and updates the log in On-Premise DB.
-     * Note: This method is not @Transactional to avoid holding an On-Prem transaction 
-     * while performing potentially slow network/Cloud operations.
+     * Main sync method called by Spring Integration Service Activator.
+     * Performs a single synchronization attempt. Retries are handled by the Integration flow.
      */
     public void syncEntity(SyncLogEntity syncLog) {
-        int maxRetries = syncConfig.getMaxRetries();
-        int attempt = 0;
-        boolean success = false;
-        String lastError = null;
-
-        while (attempt < maxRetries && !success) {
-            attempt++;
-            try {
-                // Delegation to a transactional component ensures the Cloud transaction is correctly managed.
-                cloudSyncProcessor.pushToCloud(syncLog);
-                success = true;
-            } catch (Exception e) {
-                lastError = e.getMessage();
-                log.warn("Sync attempt {} failed for entity {} (ID: {}): {}", 
-                        attempt, syncLog.getEntityName(), syncLog.getEntityId(), lastError);
-                if (attempt < maxRetries) {
-                    try {
-                        Thread.sleep(1000L * attempt);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
+        try {
+            log.info("Synchronizing {} (ID: {})", syncLog.getEntityName(), syncLog.getEntityId());
+            cloudSyncProcessor.pushToCloud(syncLog);
+            updateSyncLogStatus(syncLog, true, 0, null);
+        } catch (Exception e) {
+            log.error("Sync failed for {} (ID: {}): {}", 
+                    syncLog.getEntityName(), syncLog.getEntityId(), e.getMessage());
+            updateSyncLogStatus(syncLog, false, 0, e.getMessage());
+            throw e; // Rethrow to trigger Spring Integration retry
         }
-
-        updateSyncLogStatus(syncLog, success, attempt, lastError);
     }
 
     /**
      * Updates the synchronization log status in the On-Premise database.
-     * This method runs in its own transaction on the primary (on-prem) transaction manager.
      */
     @Transactional(value = "onPremTransactionManager")
-    public void updateSyncLogStatus(SyncLogEntity syncLog, boolean success, int attempt, String error) {
+    public void updateSyncLogStatus(SyncLogEntity syncLog, boolean success, int retryCount, String error) {
         syncLog.setStatus(success ? OrderStatus.SUCCESS : OrderStatus.FAILURE);
         syncLog.setSyncTimestamp(LocalDateTime.now());
-        syncLog.setRetryCount(attempt - 1);
         syncLog.setErrorMessage(error);
+        // We could increment retry count here if we wanted to track it specifically
         syncLogRepository.save(syncLog);
         
         if (success) {

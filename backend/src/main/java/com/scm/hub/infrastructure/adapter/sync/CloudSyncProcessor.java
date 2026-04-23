@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Internal component dedicated to executing operations on the Cloud database.
  * Uses JdbcTemplate for direct UPSERT operations to avoid Hibernate session/transaction issues
@@ -28,6 +30,7 @@ public class CloudSyncProcessor {
      * Synchronizes a single entity state to the Cloud database.
      * Uses PostgreSQL native "ON CONFLICT" for atomic and robust synchronization.
      */
+    @Transactional(readOnly = true)
     public void pushToCloud(SyncLogEntity syncLog) {
         if ("Product".equals(syncLog.getEntityName())) {
             productRepository.findById(syncLog.getEntityId()).ifPresent(p -> {
@@ -41,6 +44,7 @@ public class CloudSyncProcessor {
             });
         } else if ("Order".equals(syncLog.getEntityName())) {
             orderRepository.findById(syncLog.getEntityId()).ifPresent(o -> {
+                // 1. Sync the Order header
                 cloudJdbcTemplate.update(
                     "INSERT INTO orders (id, customer_name, status, created_at, updated_at) " +
                     "VALUES (?, ?, ?, ?, ?) " +
@@ -48,6 +52,20 @@ public class CloudSyncProcessor {
                     "customer_name = EXCLUDED.customer_name, status = EXCLUDED.status, updated_at = EXCLUDED.updated_at",
                     o.getId(), o.getCustomerName(), o.getStatus().name(), o.getCreatedAt(), o.getUpdatedAt()
                 );
+
+                // 2. Sync all OrderItems associated with this order
+                if (o.getItems() != null) {
+                    for (var item : o.getItems()) {
+                        cloudJdbcTemplate.update(
+                            "INSERT INTO order_items (id, order_id, product_id, quantity, price) " +
+                            "VALUES (?, ?, ?, ?, ?) " +
+                            "ON CONFLICT (id) DO UPDATE SET " +
+                            "order_id = EXCLUDED.order_id, product_id = EXCLUDED.product_id, " +
+                            "quantity = EXCLUDED.quantity, price = EXCLUDED.price",
+                            item.getId(), o.getId(), item.getProductId(), item.getQuantity(), item.getPrice()
+                        );
+                    }
+                }
             });
         } else if ("Warehouse".equals(syncLog.getEntityName())) {
             warehouseRepository.findById(syncLog.getEntityId()).ifPresent(w -> {

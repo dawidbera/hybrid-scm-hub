@@ -14,21 +14,50 @@ A comprehensive solution for bridging On-Premise warehouse operations with Cloud
 - `docker-compose.yml`: Infrastructure (Postgres).
 
 ## How to Run
-1.  **Start Databases:**
-    ```bash
-    docker compose up -d
-    ```
-2.  **Run Backend:**
-    ```bash
-    cd backend
-    mvn spring-boot:run
-    ```
-3.  **Run Frontend:**
-    ```bash
-    cd frontend
-    npm install
-    npm start
-    ```
+
+### 1. Hybrid Infrastructure Setup
+The project uses two separate PostgreSQL instances. Ensure Docker is running and execute:
+```bash
+docker compose up -d
+```
+**Database Port Mapping:**
+- **On-Premise DB:** `localhost:5432` (Database: `scm_onprem`)
+- **Cloud Simulation DB:** `localhost:5433` (Database: `scm_cloud`)
+
+### 2. Backend Service
+Requires Java 21 and Maven.
+```bash
+cd backend
+mvn spring-boot:run
+```
+*Note: On first run, Hibernate will automatically create the schema in both databases (`ddl-auto: update`).*
+
+### 3. Frontend Application
+Requires Node.js and npm.
+```bash
+cd frontend
+npm install
+npm start
+```
+The UI will be available at `http://localhost:4200`.
+
+## Verifying the Hybrid Setup
+
+### 1. Connection Health
+Verify that both database connections are active using the Spring Boot Actuator endpoint:
+`GET http://localhost:8080/actuator/health`
+
+Look for the `db` section in the JSON response to ensure both `onprem` and `cloud` status are `UP`.
+
+### 2. Manual Sync Validation
+To verify that data is correctly synchronizing from On-Premise to Cloud:
+1. Create an order or update stock in the Frontend UI.
+2. Check the **Audit Trail** tab in the UI for a `SUCCESS` status.
+3. (Optional) Verify via CLI that the record exists in the Cloud instance:
+```bash
+# Query the Cloud instance (Port 5433)
+psql -h localhost -p 5433 -U scm_user -d scm_cloud -c "SELECT * FROM products;"
+```
 
 ## Testing
 

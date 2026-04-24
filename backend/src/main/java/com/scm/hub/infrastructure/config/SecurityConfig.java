@@ -39,6 +39,7 @@ public class SecurityConfig {
             .and()
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()

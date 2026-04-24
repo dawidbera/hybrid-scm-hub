@@ -38,7 +38,8 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -64,12 +65,13 @@ public class SecurityConfig {
     }
 
     /**
-     * Bean for password encoding using BCrypt.
+     * Bean for password encoding using a delegating encoder.
+     * Supports various formats like BCrypt, NoOp, etc.
      * @return PasswordEncoder instance.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return org.springframework.security.crypto.factory.PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     /**

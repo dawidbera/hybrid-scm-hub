@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if ("admin".equals(username)) {
             return User.builder()
                     .username("admin")
-                    .password("$2a$10$dummyhashedpassword") // bcrypt hash for "password"
+                    .password("{noop}password") // plain text password for demo
                     .roles("ADMIN")
                     .build();
         }

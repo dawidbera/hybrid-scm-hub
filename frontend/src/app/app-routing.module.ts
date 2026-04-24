@@ -4,12 +4,15 @@ import { DashboardComponent } from './features/dashboard.component';
 import { AuditTrailComponent } from './features/audit-trail/audit-trail.component';
 import { InventoryComponent } from './features/inventory/inventory.component';
 import { OrdersComponent } from './features/orders/orders.component';
+import { LoginComponent } from './features/auth/login.component';
+import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'audit-trail', component: AuditTrailComponent },
-  { path: 'inventory', component: InventoryComponent },
-  { path: 'orders', component: OrdersComponent }
+  { path: 'login', component: LoginComponent },
+  { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'audit-trail', component: AuditTrailComponent, canActivate: [AuthGuard] },
+  { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
+  { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

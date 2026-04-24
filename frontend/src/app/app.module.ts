@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -14,6 +14,8 @@ import { inventoryReducer } from './state/inventory/inventory.reducer';
 import { InventoryEffects } from './state/inventory/inventory.effects';
 import { InventoryComponent } from './features/inventory/inventory.component';
 import { OrdersComponent } from './features/orders/orders.component';
+import { LoginComponent } from './features/auth/login.component';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,8 @@ import { OrdersComponent } from './features/orders/orders.component';
     DashboardComponent,
     AuditTrailComponent,
     InventoryComponent,
-    OrdersComponent
+    OrdersComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +37,9 @@ import { OrdersComponent } from './features/orders/orders.component';
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

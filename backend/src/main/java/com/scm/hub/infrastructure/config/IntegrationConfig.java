@@ -56,7 +56,7 @@ public class IntegrationConfig {
             entity.setStatus(com.scm.hub.domain.model.OrderStatus.valueOf(rs.getString("status")));
             return entity;
         });
-        adapter.setMaxRowsPerPoll(10);
+        adapter.setMaxRows(10);
         adapter.setUpdateSql("UPDATE sync_logs SET status = 'PROCESSING' WHERE id = :id");
         return adapter;
     }

@@ -123,6 +123,20 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     }
 
     /**
+     * Enriches a Stock domain model with product metadata (SKU and Name).
+     * @param stock The stock record to enrich.
+     * @return The enriched stock record.
+     */
+    private Stock populateProductInfo(Stock stock) {
+        if (stock == null) return null;
+        productRepository.findById(stock.getProductId()).ifPresent(product -> {
+            stock.setProductSku(product.getSku());
+            stock.setProductName(product.getName());
+        });
+        return stock;
+    }
+
+    /**
      * {@inheritDoc}
      * Behavior: Saves stock levels. Uses transactional context to ensure data integrity.
      * Implements optimistic locking to handle concurrent updates.
@@ -149,7 +163,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
         try {
             StockEntity saved = stockRepository.save(entity);
             createSyncLog("Stock", saved.getId());
-            return mapper.toDomain(saved);
+            return populateProductInfo(mapper.toDomain(saved));
         } catch (Exception e) {
             if (e.getCause() instanceof org.springframework.orm.ObjectOptimisticLockingFailureException) {
                 throw new RuntimeException("Stock was modified by another transaction. Please retry.", e);
@@ -167,6 +181,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     public List<Stock> findStockByWarehouse(UUID warehouseId) {
         return stockRepository.findByWarehouseId(warehouseId).stream()
                 .map(mapper::toDomain)
+                .map(this::populateProductInfo)
                 .collect(Collectors.toList());
     }
 
@@ -178,6 +193,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     public List<Stock> searchStock(String query, UUID warehouseId, Integer minQuantity) {
         List<Stock> candidateStocks = stockRepository.findAll().stream()
                 .map(mapper::toDomain)
+                .map(this::populateProductInfo)
                 .collect(Collectors.toList());
 
         if (warehouseId != null) {
@@ -215,6 +231,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     public List<Stock> findStockByProduct(UUID productId) {
         return stockRepository.findByProductId(productId).stream()
                 .map(mapper::toDomain)
+                .map(this::populateProductInfo)
                 .collect(Collectors.toList());
     }
 
@@ -227,6 +244,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     @Override
     public Optional<Stock> findStockByProductAndWarehouse(UUID productId, UUID warehouseId) {
         return stockRepository.findByProductIdAndWarehouseId(productId, warehouseId)
-                .map(mapper::toDomain);
+                .map(mapper::toDomain)
+                .map(this::populateProductInfo);
     }
 }

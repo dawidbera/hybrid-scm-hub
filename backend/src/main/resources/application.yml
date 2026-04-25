@@ -6,6 +6,9 @@ spring:
     name: scm-hub
   
   # Dual datasource configuration to simulate hybrid-cloud environment.
+  sql:
+    init:
+      mode: always
   datasource:
     # On-Premise database configuration - represents the local warehouse database.
     onprem:

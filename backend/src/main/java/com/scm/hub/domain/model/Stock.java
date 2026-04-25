@@ -27,6 +27,10 @@ public class Stock {
     private UUID id;
     /** ID of the product associated with this stock */
     private UUID productId;
+    /** SKU of the product for display purposes */
+    private String productSku;
+    /** Name of the product for display purposes */
+    private String productName;
     /** ID of the warehouse where this stock is physically located */
     private UUID warehouseId;
     /** Current available quantity of the product */

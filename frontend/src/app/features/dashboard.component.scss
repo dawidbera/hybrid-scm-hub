@@ -31,6 +31,58 @@
     }
   }
 
+  .filters {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    align-items: center;
+    border: 1px solid #edf2f7;
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      flex: 1;
+
+      label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #4a5568;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      input {
+        padding: 0.8rem 1.2rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #2d3748;
+        transition: all 0.2s ease-in-out;
+        background-color: #f8fafc;
+
+        &:focus {
+          outline: none;
+          border-color: #4299e1;
+          background-color: white;
+          box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+
+        &::placeholder {
+          color: #a0aec0;
+        }
+      }
+
+      &:last-child {
+        flex: 0 0 180px;
+      }
+    }
+  }
+
   .warehouse-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -85,6 +137,17 @@
       td {
         padding: 1rem;
         border-bottom: 1px solid #eee;
+
+        &.sku-cell {
+          font-family: 'Courier New', Courier, monospace;
+          font-weight: 600;
+          color: #7f8c8d;
+        }
+
+        &.name-cell {
+          font-weight: 500;
+          color: #2c3e50;
+        }
       }
 
       .quantity-badge {

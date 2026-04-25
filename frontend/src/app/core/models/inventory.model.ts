@@ -34,6 +34,10 @@ export interface Stock {
   id?: string;
   /** ID of the product this stock belongs to */
   productId: string;
+  /** SKU of the product for display purposes */
+  productSku?: string;
+  /** Name of the product for display purposes */
+  productName?: string;
   /** ID of the warehouse where this stock is located */
   warehouseId: string;
   /** Current quantity of the product available in the warehouse */

@@ -35,14 +35,16 @@
         <table>
           <thead>
             <tr>
-              <th>Product ID</th>
+              <th>SKU</th>
+              <th>Product Name</th>
               <th>Quantity</th>
               <th>Last Updated</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let s of stocks" class="stock-row">
-              <td>{{s.productId}}</td>
+              <td class="sku-cell">{{s.productSku}}</td>
+              <td class="name-cell">{{s.productName}}</td>
               <td>
                 <span class="quantity-badge" [class.low]="s.quantity < 10">
                   {{s.quantity}}

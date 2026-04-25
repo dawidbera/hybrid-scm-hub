@@ -8,7 +8,7 @@ spring:
   # Dual datasource configuration to simulate hybrid-cloud environment.
   sql:
     init:
-      mode: always
+      mode: never
   datasource:
     # On-Premise database configuration - represents the local warehouse database.
     onprem:

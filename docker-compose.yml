@@ -33,6 +33,7 @@ services:
     environment:
       - SPRING_DATASOURCE_ONPREM_URL=jdbc:postgresql://postgres-onprem:5432/scm_onprem
       - SPRING_DATASOURCE_CLOUD_URL=jdbc:postgresql://postgres-cloud:5432/scm_cloud
+      - SPRING_SQL_INIT_MODE=always
     depends_on:
       - postgres-onprem
       - postgres-cloud

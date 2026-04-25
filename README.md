@@ -15,16 +15,25 @@ A comprehensive solution for bridging On-Premise warehouse operations with Cloud
 
 ## How to Run
 
-### 1. Hybrid Infrastructure Setup
+### Option A: Full Application via Docker (Recommended)
+This is the fastest way to run the entire stack (Databases, Backend, and Frontend).
+```bash
+docker compose up --build -d
+```
+The Frontend will be available at `http://localhost:80`, and the Backend API at `http://localhost:8080`.
+
+### Option B: Manual Setup (Development Mode)
+
+#### 1. Hybrid Infrastructure Setup
 The project uses two separate PostgreSQL instances. Ensure Docker is running and execute:
 ```bash
-docker compose up -d
+docker compose up postgres-onprem postgres-cloud -d
 ```
 **Database Port Mapping:**
 - **On-Premise DB:** `localhost:5432` (Database: `scm_onprem`)
 - **Cloud Simulation DB:** `localhost:5433` (Database: `scm_cloud`)
 
-### 2. Backend Service
+#### 2. Backend Service
 Requires Java 21 and Maven.
 ```bash
 cd backend
@@ -32,7 +41,7 @@ mvn spring-boot:run
 ```
 *Note: On first run, Hibernate will automatically create the schema in both databases (`ddl-auto: update`).*
 
-### 3. Frontend Application
+#### 3. Frontend Application
 Requires Node.js and npm.
 ```bash
 cd frontend

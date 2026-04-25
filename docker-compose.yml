@@ -3,7 +3,6 @@
 
 services:
   # On-Premise Database instance.
-  # Represents the local database running in a warehouse or remote facility.
   postgres-onprem:
     image: postgres:15
     container_name: scm-onprem-db
@@ -12,10 +11,9 @@ services:
       POSTGRES_USER: scm_user
       POSTGRES_PASSWORD: scm_password
     ports:
-      - "5432:5432" # Standard PostgreSQL port mapped to the host.
+      - "5432:5432"
 
   # Cloud Simulation Database instance.
-  # Represents the centralized cloud-based database for corporate analytics.
   postgres-cloud:
     image: postgres:15
     container_name: scm-cloud-db
@@ -24,4 +22,26 @@ services:
       POSTGRES_USER: scm_user
       POSTGRES_PASSWORD: scm_password
     ports:
-      - "5433:5432" # Mapped to host port 5433 to avoid conflict with the on-prem instance.
+      - "5433:5432"
+
+  # Backend application service.
+  backend:
+    build: ./backend
+    container_name: scm-hub-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_ONPREM_URL=jdbc:postgresql://postgres-onprem:5432/scm_onprem
+      - SPRING_DATASOURCE_CLOUD_URL=jdbc:postgresql://postgres-cloud:5432/scm_cloud
+    depends_on:
+      - postgres-onprem
+      - postgres-cloud
+
+  # Frontend application service.
+  frontend:
+    build: ./frontend
+    container_name: scm-hub-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

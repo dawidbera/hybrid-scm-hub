@@ -9,15 +9,15 @@ spring:
   datasource:
     # On-Premise database configuration - represents the local warehouse database.
     onprem:
-      url: jdbc:postgresql://localhost:5432/scm_onprem
-      username: scm_user
-      password: scm_password
+      url: ${SPRING_DATASOURCE_ONPREM_URL:jdbc:postgresql://localhost:5432/scm_onprem}
+      username: ${SPRING_DATASOURCE_ONPREM_USERNAME:scm_user}
+      password: ${SPRING_DATASOURCE_ONPREM_PASSWORD:scm_password}
       driver-class-name: org.postgresql.Driver
     # Cloud database configuration - represents the centralized corporate analytics database.
     cloud:
-      url: jdbc:postgresql://localhost:5433/scm_cloud
-      username: scm_user
-      password: scm_password
+      url: ${SPRING_DATASOURCE_CLOUD_URL:jdbc:postgresql://localhost:5433/scm_cloud}
+      username: ${SPRING_DATASOURCE_CLOUD_USERNAME:scm_user}
+      password: ${SPRING_DATASOURCE_CLOUD_PASSWORD:scm_password}
       driver-class-name: org.postgresql.Driver
 
   # JPA / Hibernate configuration.

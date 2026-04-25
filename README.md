@@ -98,6 +98,12 @@ npx cypress run
 - **Optimistic Locking:** Robust concurrency handling for stock management.
 - **Health Monitoring:** Dedicated Actuator endpoints for tracking On-Prem and Cloud database connectivity.
 
+## Technical Lessons Learned (Gotchas)
+
+- **Testcontainers Performance:** Initially, each integration test class started its own set of Docker containers, leading to port conflicts and slow execution. We implemented the **Singleton Container pattern** in `AbstractIntegrationTest`, where containers are started once in a static block and shared across the entire test suite.
+- **JPA Lazy Loading in Tests:** When verifying synchronization in the Cloud database using `EntityManager`, we encountered `LazyInitializationException` because the test session was different from the one used by the sync engine. We resolved this by using explicit `JOIN FETCH` queries in tests to eagerly load related entities (like `OrderItem`).
+- **Data Type Consistency:** Notice that `ProductEntity` uses `BigDecimal` for precision in the catalog, while `OrderItemEntity` uses `Double` for historical snapshots. Our `CloudSyncProcessor` handles these mappings via direct JDBC to ensure high-performance upserts without Hibernate overhead.
+
 ## Monitoring & Health Checks
 The application uses Spring Boot Actuator to provide production-ready monitoring.
 - **Health Endpoint:** `GET /actuator/health`

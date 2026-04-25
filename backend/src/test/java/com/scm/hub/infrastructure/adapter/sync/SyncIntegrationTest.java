@@ -1,5 +1,6 @@
 package com.scm.hub.infrastructure.adapter.sync;
 
+import com.scm.hub.base.AbstractIntegrationTest;
 import com.scm.hub.domain.model.OrderStatus;
 import com.scm.hub.infrastructure.adapter.persistence.entity.ProductEntity;
 import com.scm.hub.infrastructure.adapter.persistence.entity.SyncLogEntity;
@@ -9,46 +10,17 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = {
-    "sync.enabled=false",
-    "spring.main.allow-bean-definition-overriding=true"
-})
-@Testcontainers
-class SyncIntegrationTest {
-
-    @Container
-    static PostgreSQLContainer<?> onPremDb = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withDatabaseName("scm_onprem")
-            .withUsername("scm_user")
-            .withPassword("scm_password");
-
-    @Container
-    static PostgreSQLContainer<?> cloudDb = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withDatabaseName("scm_cloud")
-            .withUsername("scm_user")
-            .withPassword("scm_password");
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.onprem.url", onPremDb::getJdbcUrl);
-        registry.add("spring.datasource.onprem.username", onPremDb::getUsername);
-        registry.add("spring.datasource.onprem.password", onPremDb::getPassword);
-
-        registry.add("spring.datasource.cloud.url", cloudDb::getJdbcUrl);
-        registry.add("spring.datasource.cloud.username", cloudDb::getUsername);
-        registry.add("spring.datasource.cloud.password", cloudDb::getPassword);
-    }
+/**
+ * Integration test for verifying basic product synchronization logic.
+ * Ensures that changes made to products in the On-Premise database are correctly pushed to the Cloud.
+ */
+class SyncIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private SyncService syncService;
@@ -62,6 +34,9 @@ class SyncIntegrationTest {
     @PersistenceContext(unitName = "cloud")
     private EntityManager cloudEntityManager;
 
+    /**
+     * Verifies that a product created in the On-Premise database is correctly synchronized to the Cloud database.
+     */
     @Test
     void shouldSyncProductToCloud() {
         // Given

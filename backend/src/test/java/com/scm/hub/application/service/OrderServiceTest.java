@@ -13,6 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for OrderService.
+ * Validates order lifecycle management and business rules.
+ */
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
@@ -25,6 +29,9 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
+    /**
+     * Verifies that a new order is correctly initialized with CREATED status.
+     */
     @Test
     void createOrder_shouldCreateOrder() {
         Order order = Order.builder().customerName("Test").build();

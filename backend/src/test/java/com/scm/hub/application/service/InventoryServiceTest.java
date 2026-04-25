@@ -20,6 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for InventoryService.
+ * Validates stock management logic, including validation rules and data integrity.
+ */
 @ExtendWith(MockitoExtension.class)
 class InventoryServiceTest {
 
@@ -32,13 +36,16 @@ class InventoryServiceTest {
     @InjectMocks
     private InventoryService inventoryService;
 
+    /**
+     * Verifies that stock updates correctly validate the existence of both product and warehouse.
+     */
     @Test
     void updateStock_shouldValidateExistingProductAndWarehouse() {
         UUID productId = UUID.randomUUID();
         UUID warehouseId = UUID.randomUUID();
 
         when(inventoryPort.findProductById(productId)).thenReturn(Optional.of(Product.builder().id(productId).sku("S-001").build()));
-        when(inventoryPort.findWarehouseById(warehouseId)).thenReturn(Optional.of(Warehouse.builder().id(warehouseId).name("Main").location("Poland").build()));
+        when(inventoryPort.findWarehouseById(warehouseId)).thenReturn(Optional.of(Warehouse.builder().id(warehouseId).name("Main").location("London").build()));
         when(inventoryPort.saveStock(any(Stock.class))).thenAnswer(invocation -> {
             Stock stock = invocation.getArgument(0);
             stock.setId(UUID.randomUUID());
@@ -54,6 +61,9 @@ class InventoryServiceTest {
         assertThat(updated.getWarehouseId()).isEqualTo(warehouseId);
     }
 
+    /**
+     * Ensures that stock updates with negative quantities are rejected.
+     */
     @Test
     void updateStock_shouldRejectNegativeQuantity() {
         assertThrows(IllegalArgumentException.class, () -> inventoryService.updateStock(UUID.randomUUID(), UUID.randomUUID(), -1));

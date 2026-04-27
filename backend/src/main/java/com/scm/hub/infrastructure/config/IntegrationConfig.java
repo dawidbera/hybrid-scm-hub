@@ -47,7 +47,7 @@ public class IntegrationConfig {
     @InboundChannelAdapter(value = "syncChannel", poller = @Poller(fixedDelay = "${sync.interval-ms:10000}"))
     public MessageSource<Object> jdbcInboundAdapter() {
         JdbcPollingChannelAdapter adapter = new JdbcPollingChannelAdapter(onPremDataSource,
-                "SELECT id, entity_name, entity_id, status FROM sync_logs WHERE status IN ('PENDING', 'FAILURE') ORDER BY sync_timestamp ASC");
+                "SELECT id, entity_name, entity_id, status FROM sync_logs WHERE status IN ('PENDING', 'FAILURE') ORDER BY sync_timestamp ASC NULLS FIRST");
         adapter.setRowMapper((rs, rowNum) -> {
             SyncLogEntity entity = new SyncLogEntity();
             entity.setId(java.util.UUID.fromString(rs.getString("id")));

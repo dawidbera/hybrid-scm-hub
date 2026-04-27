@@ -47,6 +47,7 @@ public class OrderPersistenceAdapter implements OrderPort {
                 .entityName("Order")
                 .entityId(entity.getId())
                 .status(OrderStatus.PENDING)
+                .syncTimestamp(java.time.LocalDateTime.now())
                 .build();
         syncLogRepository.save(syncLog);
 

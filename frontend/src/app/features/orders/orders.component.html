@@ -20,8 +20,10 @@
         <button type="button" (click)="removeOrderItem(i)" *ngIf="newOrder.items.length > 1">Remove</button>
       </div>
 
-      <button type="button" (click)="addOrderItem()">Add Item</button>
-      <button type="submit" [disabled]="!orderForm.form.valid">Submit Order</button>
+      <div class="form-actions">
+        <button type="button" (click)="addOrderItem()">Add Item</button>
+        <button type="submit" [disabled]="!orderForm.form.valid">Submit Order</button>
+      </div>
     </form>
   </section>
 

@@ -1,38 +1,174 @@
-/* Orders component styles */
 .orders-container {
-  max-width: 1000px;
+  padding: 2rem;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
-}
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 
-.orders-container h2,
-.orders-container h3 {
-  margin-bottom: 1rem;
-}
+  h2 {
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    font-weight: 300;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+  }
 
-.order-items {
-  display: grid;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
+  section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
 
-.order-items select,
-.order-items input {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-}
+    h3 {
+      color: #34495e;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 1.25rem;
+        background-color: #e67e22; /* Different accent color for orders */
+        margin-right: 0.75rem;
+        border-radius: 2px;
+      }
+    }
+  }
 
-td, th {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-}
+  .create-order {
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
 
-button {
-  margin-right: 0.5rem;
+      > input {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        max-width: 400px;
+
+        &:focus {
+          outline: none;
+          border-color: #e67e22;
+          box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.2);
+        }
+      }
+    }
+
+    .order-items {
+      display: grid;
+      grid-template-columns: 2fr 1.5fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem;
+      background: #fcfcfc;
+      border-radius: 6px;
+      border: 1px solid #eee;
+
+      select, input {
+        padding: 0.6rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+      }
+
+      button {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+
+        &:hover {
+          background-color: #c0392b;
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+
+      button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+
+        &[type="button"] {
+          background-color: #ecf0f1;
+          color: #7f8c8d;
+          &:hover { background-color: #bdc3c7; }
+        }
+
+        &[type="submit"] {
+          background-color: #e67e22;
+          color: white;
+          &:hover:not(:disabled) { background-color: #d35400; }
+          &:disabled { background-color: #edbb99; cursor: not-allowed; }
+        }
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      text-align: left;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      color: #7f8c8d;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+
+      &[data-status="CREATED"] { background: #ebf5fb; color: #3498db; }
+      &[data-status="PROCESSING"] { background: #fef9e7; color: #f1c40f; }
+      &[data-status="SHIPPED"] { background: #e9f7ef; color: #27ae60; }
+      &[data-status="DELIVERED"] { background: #f4f6f7; color: #7f8c8d; }
+    }
+
+    button {
+      padding: 0.4rem 0.8rem;
+      border: 1px solid #3498db;
+      background: transparent;
+      color: #3498db;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #3498db;
+        color: white;
+      }
+    }
+  }
 }

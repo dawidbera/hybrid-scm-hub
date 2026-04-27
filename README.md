@@ -8,6 +8,21 @@ A comprehensive solution for bridging On-Premise warehouse operations with Cloud
 - **Database:** 2x PostgreSQL (On-Prem & Cloud simulation).
 - **Architecture:** Hexagonal (Ports & Adapters).
 
+## Application Preview
+
+### Dashboard & Analytics
+![Dashboard](docs/images/dashboard.png)
+
+### Inventory Management
+![Inventory Top](docs/images/inventory-top.png)
+![Inventory Bottom](docs/images/inventory-bottom.png)
+
+### Order Management
+![Orders](docs/images/order.png)
+
+### Synchronization Audit Trail
+![Audit Trail](docs/images/audit-trail.png)
+
 ## Project Structure
 - `backend/`: Spring Boot application.
 - `frontend/`: Angular application.

@@ -109,6 +109,7 @@ npx cypress run
 
 ## Technical Lessons Learned (Gotchas)
 
+- **SQL Initialization vs Hibernate DDL-Auto:** In Spring Boot 3.x, `data.sql` runs *before* Hibernate's schema generation by default. Setting `spring.sql.init.mode: always` while using `ddl-auto: update` can lead to startup failures (e.g., "Table not found") if the schema isn't already present. We keep it as `never` to ensure tests run smoothly with Testcontainers and only enable it explicitly via Docker Compose or manual override when seeding a fresh environment.
 - **Testcontainers Performance:** Initially, each integration test class started its own set of Docker containers, leading to port conflicts and slow execution. We implemented the **Singleton Container pattern** in `AbstractIntegrationTest`, where containers are started once in a static block and shared across the entire test suite.
 - **JPA Lazy Loading in Tests:** When verifying synchronization in the Cloud database using `EntityManager`, we encountered `LazyInitializationException` because the test session was different from the one used by the sync engine. We resolved this by using explicit `JOIN FETCH` queries in tests to eagerly load related entities (like `OrderItem`).
 - **Data Type Consistency:** Notice that `ProductEntity` uses `BigDecimal` for precision in the catalog, while `OrderItemEntity` uses `Double` for historical snapshots. Our `CloudSyncProcessor` handles these mappings via direct JDBC to ensure high-performance upserts without Hibernate overhead.

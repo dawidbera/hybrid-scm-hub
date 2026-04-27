@@ -15,8 +15,8 @@
           <option value="" disabled>Select warehouse</option>
           <option *ngFor="let w of warehouses" [value]="w.id">{{ w.name }}</option>
         </select>
-        <input [(ngModel)]="item.quantity" name="quantity-{{ i }}" type="number" min="1" required>
-        <input [(ngModel)]="item.price" name="price-{{ i }}" type="number" min="0" step="0.01" required>
+        <input [(ngModel)]="item.quantity" name="quantity-{{ i }}" type="number" min="1" placeholder="Qty" required title="Quantity">
+        <input [(ngModel)]="item.price" name="price-{{ i }}" type="number" min="0" step="0.01" placeholder="Price" required title="Unit Price">
         <button type="button" (click)="removeOrderItem(i)" *ngIf="newOrder.items.length > 1">Remove</button>
       </div>
 

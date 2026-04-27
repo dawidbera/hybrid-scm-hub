@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 
 /**
  * Service for handling user authentication and session management.
@@ -10,6 +10,12 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   private apiUrl = '/api/auth';
+  private loggedInSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
+  
+  /**
+   * Observable tracking the current login status.
+   */
+  isLoggedIn$ = this.loggedInSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +26,12 @@ export class AuthService {
    * @returns An Observable with the authentication token.
    */
   login(username: string, password: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { username, password });
+    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { username, password }).pipe(
+      tap(response => {
+        localStorage.setItem('token', response.token);
+        this.loggedInSubject.next(true);
+      })
+    );
   }
 
   /**
@@ -28,6 +39,7 @@ export class AuthService {
    */
   logout(): void {
     localStorage.removeItem('token');
+    this.loggedInSubject.next(false);
   }
 
   /**

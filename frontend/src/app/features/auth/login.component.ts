@@ -26,15 +26,14 @@ export class LoginComponent {
 
   /**
    * Submits login credentials to the authentication service.
-   * On success, stores the token and redirects to the home page.
+   * On success, redirects to the home page.
    */
   onSubmit(): void {
     this.authService.login(this.username, this.password).subscribe({
-      next: (response) => {
-        localStorage.setItem('token', response.token);
+      next: () => {
         this.router.navigate(['/']);
       },
-      error: (err) => {
+      error: () => {
         this.error = 'Invalid credentials';
       }
     });

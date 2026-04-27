@@ -1,4 +1,31 @@
-<nav>
-  <a routerLink="/">Dashboard</a> | <a routerLink="/inventory">Inventory</a> | <a routerLink="/orders">Orders</a> | <a routerLink="/audit-trail">Audit Trail</a>
-</nav>
-<router-outlet></router-outlet>
+<header class="app-navbar" *ngIf="isLoggedIn$ | async">
+  <div class="navbar-container">
+    <div class="navbar-brand" routerLink="/">
+      <span class="brand-logo">SCM</span>
+      <span class="brand-name">Hybrid Hub</span>
+    </div>
+    
+    <nav class="navbar-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <i class="nav-icon">📊</i> Dashboard
+      </a>
+      <a routerLink="/inventory" routerLinkActive="active">
+        <i class="nav-icon">📦</i> Inventory
+      </a>
+      <a routerLink="/orders" routerLinkActive="active">
+        <i class="nav-icon">📜</i> Orders
+      </a>
+      <a routerLink="/audit-trail" routerLinkActive="active">
+        <i class="nav-icon">🔍</i> Audit Trail
+      </a>
+    </nav>
+    
+    <div class="navbar-actions">
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</header>
+
+<main class="content-area">
+  <router-outlet></router-outlet>
+</main>

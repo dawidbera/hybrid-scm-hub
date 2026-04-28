@@ -26,6 +26,12 @@ class OrderServiceTest {
     @Mock
     private InventoryService inventoryService;
 
+    @Mock
+    private OrderDocumentService orderDocumentService;
+
+    @Mock
+    private OrderEventPublisher orderEventPublisher;
+
     @InjectMocks
     private OrderService orderService;
 

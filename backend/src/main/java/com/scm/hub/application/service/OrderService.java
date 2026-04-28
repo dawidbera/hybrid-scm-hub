@@ -22,6 +22,8 @@ public class OrderService {
 
     private final OrderPort orderPort;
     private final InventoryService inventoryService;
+    private final OrderDocumentService orderDocumentService;
+    private final OrderEventPublisher orderEventPublisher;
 
     /**
      * Creates a new order in the system.
@@ -30,6 +32,8 @@ public class OrderService {
      * 2. Sets the initial status to CREATED.
      * 3. Reduces stock for each item in the order via {@link InventoryService}.
      * 4. Persists the order via {@link OrderPort}.
+     * 5. Uploads order document to S3.
+     * 6. Publishes order created event to SQS for async cloud sync.
      *
      * @param order The order details. Must not be null and should contain at least one item.
      * @return The created order with calculated total and timestamps.
@@ -56,7 +60,13 @@ public class OrderService {
             }
         }
 
-        return orderPort.saveOrder(order);
+        Order savedOrder = orderPort.saveOrder(order);
+
+        // Async Cloud-Native operations
+        orderDocumentService.uploadOrderDocument(savedOrder);
+        orderEventPublisher.publishOrderCreatedEvent(savedOrder);
+
+        return savedOrder;
     }
 
     /**

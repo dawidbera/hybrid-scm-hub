@@ -26,11 +26,32 @@ spring:
   # JPA / Hibernate configuration.
   jpa:
     hibernate:
-      ddl-auto: update # Automatically updates the schema based on entity changes.
-    show-sql: true     # Logs SQL statements to the console.
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
         format_sql: true # Formats the logged SQL for better readability.
+
+  # AWS Configuration for Cloud Services.
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION:us-east-1}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:test}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+      s3:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      sqs:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+
+# Custom application properties.
+scm:
+  aws:
+    s3:
+      bucket-name: scm-order-documents
+    sqs:
+      queue-name: scm-order-events
 
 # Logging configuration.
 logging:

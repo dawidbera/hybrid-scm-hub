@@ -24,6 +24,19 @@ services:
     ports:
       - "5433:5432"
 
+  # Cloud service simulation (S3, SQS).
+  localstack:
+    image: localstack/localstack:latest
+    container_name: scm-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,sqs
+      - DEFAULT_REGION=us-east-1
+      - DEBUG=1
+    volumes:
+      - "./localstack-init:/etc/localstack/init/ready.d"
+
   # Backend application service.
   backend:
     build: ./backend
@@ -34,9 +47,14 @@ services:
       - SPRING_DATASOURCE_ONPREM_URL=jdbc:postgresql://postgres-onprem:5432/scm_onprem
       - SPRING_DATASOURCE_CLOUD_URL=jdbc:postgresql://postgres-cloud:5432/scm_cloud
       - SPRING_SQL_INIT_MODE=always
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
     depends_on:
       - postgres-onprem
       - postgres-cloud
+      - localstack
 
   # Frontend application service.
   frontend:

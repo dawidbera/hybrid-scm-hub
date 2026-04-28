@@ -3,10 +3,11 @@
 A comprehensive solution for bridging On-Premise warehouse operations with Cloud analytics.
 
 ## Tech Stack
-- **Backend:** Java 21, Spring Boot 3.4, Hibernate, **Spring Integration (JDBC)**, **Spring Retry**, Spring Boot Actuator.
+- **Backend:** Java 21, Spring Boot 3.4, Hibernate, **Spring Integration**, **Spring Cloud AWS (S3, SQS)**, Spring Boot Actuator.
 - **Frontend:** Angular 16, NgRx, SCSS, RxJS.
 - **Database:** 2x PostgreSQL (On-Prem & Cloud simulation).
-- **Architecture:** Hexagonal (Ports & Adapters).
+- **Cloud Simulation:** **LocalStack** (S3 for documents, SQS for event-driven sync).
+- **Architecture:** Hexagonal (Ports & Adapters) + Event-Driven.
 
 ## Application Preview
 
@@ -26,12 +27,13 @@ A comprehensive solution for bridging On-Premise warehouse operations with Cloud
 ## Project Structure
 - `backend/`: Spring Boot application.
 - `frontend/`: Angular application.
-- `docker-compose.yml`: Infrastructure (Postgres).
+- `docker-compose.yml`: Infrastructure (Postgres, LocalStack).
+- `localstack-init/`: AWS resource initialization scripts.
 
 ## How to Run
 
 ### Option A: Full Application via Docker (Recommended)
-This is the fastest way to run the entire stack (Databases, Backend, and Frontend).
+This is the fastest way to run the entire stack (Databases, LocalStack, Backend, and Frontend).
 ```bash
 docker compose up --build -d
 ```
@@ -40,13 +42,14 @@ The Frontend will be available at `http://localhost:80`, and the Backend API at 
 ### Option B: Manual Setup (Development Mode)
 
 #### 1. Hybrid Infrastructure Setup
-The project uses two separate PostgreSQL instances. Ensure Docker is running and execute:
+The project uses two separate PostgreSQL instances and LocalStack for AWS simulation. Ensure Docker is running and execute:
 ```bash
-docker compose up postgres-onprem postgres-cloud -d
+docker compose up postgres-onprem postgres-cloud localstack -d
 ```
-**Database Port Mapping:**
+**Service Port Mapping:**
 - **On-Premise DB:** `localhost:5432` (Database: `scm_onprem`)
 - **Cloud Simulation DB:** `localhost:5433` (Database: `scm_cloud`)
+- **LocalStack (AWS):** `localhost:4566` (S3, SQS)
 
 #### 2. Backend Service
 Requires Java 21 and Maven.
@@ -116,11 +119,12 @@ npx cypress run
 
 ## Key Features
 - **Real-time Inventory Tracking:** Live updates via WebSockets.
-- **Message-Driven Sync Engine:** Robust data synchronization using Spring Integration and the **Transactional Outbox pattern**.
-- **Resilience & Reliability:** Automatic retries with **Exponential Backoff** to handle transient failures during cloud synchronization.
+- **Event-Driven Cloud Sync:** Asynchronous order synchronization using **Amazon SQS** for high resilience and decoupling.
+- **Cloud Document Storage:** Automated generation and upload of order documents to **Amazon S3**.
+- **Message-Driven Engine:** Robust data synchronization using Spring Integration.
+- **Resilience & Reliability:** Automatic retries with **Exponential Backoff** to handle transient failures.
 - **Hexagonal Design:** Decoupled domain logic for high maintainability.
 - **Optimistic Locking:** Robust concurrency handling for stock management.
-- **Health Monitoring:** Dedicated Actuator endpoints for tracking On-Prem and Cloud database connectivity.
 
 ## Technical Lessons Learned (Gotchas)
 
@@ -135,8 +139,6 @@ The application uses Spring Boot Actuator to provide production-ready monitoring
 - **Details:** The health check includes a custom `DatabaseHealthIndicator` that verifies connectivity to both the On-Premise and Cloud databases independently.
 
 ## System Architecture & Request Flow
-
-The system follows the **Hexagonal Architecture** (Ports & Adapters) to ensure business logic remains decoupled from external infrastructure. While technically a modular monolith, the services are designed with microservice principles in mind (Inventory, Order, Sync Log).
 
 ```mermaid
 graph TD
@@ -153,48 +155,39 @@ graph TD
         
         subgraph "Application & Domain"
             direction LR
-            InventorySvc[Inventory Service]
             OrderSvc[Order Service]
-            SyncSvc[Sync Log Service]
-            AuthSvc[Auth Service]
-            Domain[Domain Models]
+            InventorySvc[Inventory Service]
+            DocSvc[Order Document Service]
+            EventPub[Order Event Publisher]
         end
         
         Persist[Persistence Adapter]
-        Sync[Sync Engine - Spring Integration]
     end
 
-    subgraph "Infrastructure"
+    subgraph "Infrastructure & Cloud (LocalStack)"
         DB_Local[(PostgreSQL On-Prem)]
-        DB_Cloud[(PostgreSQL Cloud Simulation)]
+        DB_Cloud[(PostgreSQL Cloud)]
+        S3[(Amazon S3 - Documents)]
+        SQS{Amazon SQS - Events}
     end
 
     %% Flow
     UI -->|REST API| REST
-    REST --> AuthSvc
-    REST --> InventorySvc
     REST --> OrderSvc
-    REST --> SyncSvc
     
-    OrderSvc -->|Reduce Stock| InventorySvc
-    
-    InventorySvc --> Domain
-    OrderSvc --> Domain
-    SyncSvc --> Domain
-    
-    InventorySvc --> Persist
-    OrderSvc --> Persist
-    SyncSvc --> Persist
-    
+    OrderSvc -->|1. Save| Persist
     Persist --> DB_Local
     
-    DB_Local -.->|Change Capture| Sync
-    Sync -->|Push| DB_Cloud
+    OrderSvc -->|2. Document| DocSvc
+    DocSvc -->|Upload| S3
+    
+    OrderSvc -->|3. Notify| EventPub
+    EventPub -->|Publish| SQS
+    
+    SQS -->|Async Sync| DB_Cloud
     
     InventorySvc -.->|Updates| WS_Server
-    WS_Server -.->|Push Notifications| WS_Client
-    WS_Client --> Store
-    Store --> UI
+    WS_Server -.->|Push| WS_Client
 ```
 
 ## Database Schema
@@ -253,18 +246,35 @@ erDiagram
         uuid entityId
         string status
         string errorMessage
-        datetime syncTimestamp
-        int retryCount
-    }
-```
+        WS_Server -.->|Push| WS_Client
+        ```
 
-### Request Flow Overview:
-1.  **User Interaction:** The user performs an action in the Angular UI (e.g., login, placing an order, or checking inventory).
-2.  **API Request:** The Frontend sends a REST request to the Backend through the `REST Controller Adapter`.
-3.  **Domain Processing:**
-    *   **Authentication:** Handled by the `Auth Service` using JWT.
-    *   **Inventory Requests:** Handled directly by the `Inventory Service`.
-    *   **Order Requests:** Handled by the `Order Service`, which orchestrates with the `Inventory Service` to ensure stock availability and reduction.
-4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL) and creates a `SyncLog` entry (Transactional Outbox).
-5.  **Synchronization:** The **Sync Engine** (via Spring Integration JDBC Polling) picks up pending logs and asynchronously synchronizes them to the **Cloud Database** with built-in retry logic.
-6.  **Real-time Updates:** Successful inventory changes trigger `WebSocket` notifications via the `WebSocket Server Adapter`, allowing the UI to reflect updates across all connected clients instantly.
+        ## Hybrid Synchronization Strategy
+
+        This project demonstrates two distinct patterns for data synchronization, each chosen for its specific strengths:
+
+        ### 1. Database Polling (Spring Integration)
+        - **Used for:** Inventory updates and Warehouse metadata.
+        - **Pattern:** **Transactional Outbox**.
+        - **Why:** Absolute data integrity. Inventory changes are mission-critical and must be consistent with the local database. The "Outbox" (Sync Log) ensures that no stock update is ever lost, even during system crashes, by handling synchronization in reliable batches.
+
+        ### 2. Event-Driven (Amazon SQS)
+        - **Used for:** Order processing and Cloud-Native extensions.
+        - **Pattern:** **Asynchronous Messaging**.
+        - **Why:** High decoupling and low latency. Placing an order is a complex business event that triggers multiple downstream actions (S3 documentation, Cloud sync). SQS allows the system to respond instantly to the user while the "heavy lifting" happens asynchronously in the background.
+
+        ## Database Schema
+        ...
+        ### Request Flow Overview:
+        1.  **User Interaction:** The user performs an action in the Angular UI (e.g., login, placing an order, or checking inventory).
+        2.  **API Request:** The Frontend sends a REST request to the Backend through the `REST Controller Adapter`.
+        3.  **Domain Processing:**
+        *   **Authentication:** Handled by the `Auth Service` using JWT.
+        *   **Inventory Requests:** Handled directly by the `Inventory Service`.
+        *   **Order Requests:** Handled by the `Order Service`, which orchestrates stock reduction, S3 document generation, and SQS event publishing.
+        4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL). For inventory changes, it also creates a `SyncLog` entry (Transactional Outbox).
+        5.  **Dual-Path Synchronization:**
+        *   **Path A (Inventory):** The **Spring Integration Engine** polls pending logs and synchronizes them to the Cloud DB.
+        *   **Path B (Orders):** The **SQS Listener** picks up order events from the queue for near real-time processing and cloud archival.
+        6.  **Real-time Updates:** Successful changes trigger `WebSocket` notifications, allowing the UI to reflect updates across all connected clients instantly.
+

@@ -4,8 +4,7 @@
     <table>
       <thead>
         <tr>
-          <th>Entity</th>
-          <th>Entity ID</th>
+          <th>Type</th>
           <th>Status</th>
           <th>Sync Details</th>
           <th>Timestamp</th>
@@ -14,7 +13,6 @@
       <tbody>
         <tr *ngFor="let log of auditLogs" [class.error-row]="log.status === 'FAILURE'">
           <td><strong>{{ log.entityName }}</strong></td>
-          <td class="id-cell">{{ log.entityId }}</td>
           <td>
             <span class="status-badge" [attr.data-status]="log.status">
               {{ log.status }}

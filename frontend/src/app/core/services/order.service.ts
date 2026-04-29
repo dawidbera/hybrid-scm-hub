@@ -42,4 +42,15 @@ export class OrderService {
       params: { status }
     });
   }
+
+  /**
+   * Downloads the JSON document for a specific order from S3.
+   * @param orderId The ID of the order.
+   * @returns An Observable of the file Blob.
+   */
+  downloadOrderDocument(orderId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${orderId}/document`, {
+      responseType: 'blob'
+    });
+  }
 }

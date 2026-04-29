@@ -94,4 +94,19 @@ export class OrdersComponent implements OnInit {
       this.loadOrders();
     });
   }
+
+  /**
+   * Downloads the order document as a file.
+   * @param orderId The ID of the order.
+   */
+  downloadDocument(orderId: string): void {
+    this.orderService.downloadOrderDocument(orderId).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `order-${orderId}.json`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
 }

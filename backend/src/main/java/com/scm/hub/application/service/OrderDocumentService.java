@@ -2,6 +2,7 @@ package com.scm.hub.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scm.hub.domain.model.Order;
+import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.UUID;
 
 /**
  * Service responsible for generating and storing order documents in AWS S3.
@@ -43,5 +45,16 @@ public class OrderDocumentService {
         } catch (Exception e) {
             log.error("Failed to upload order document for order {}", order.getId(), e);
         }
+    }
+
+    /**
+     * Downloads an order document from S3.
+     *
+     * @param orderId The UUID of the order.
+     * @return The S3Resource containing the document.
+     */
+    public S3Resource downloadOrderDocument(UUID orderId) {
+        String fileName = String.format("order-%s.json", orderId);
+        return s3Template.download(bucketName, fileName);
     }
 }

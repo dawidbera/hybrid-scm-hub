@@ -271,7 +271,7 @@ This project demonstrates two distinct patterns for data synchronization, each c
 3.  **Domain Processing:**
     *   **Authentication:** Handled via JWT and Spring Security.
     *   **Inventory Requests:** Handled by the `Inventory Service`.
-    *   **Order Requests:** Handled by the `Order Service`, which orchestrates stock reduction, S3 document generation, and SQS event publishing.
+    *   **Order Requests:** Handled by the `Order Service`, which orchestrates stock reduction, S3 document generation, and SQS event publishing. The `Order Controller` also provides endpoints for retrieving these documents from S3.
 4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL). For inventory changes, it also creates a `SyncLog` entry (Transactional Outbox).
 5.  **Dual-Path Synchronization:**
     *   **Path A (Inventory):** The **Spring Integration Engine** polls pending logs and synchronizes them to the Cloud DB.

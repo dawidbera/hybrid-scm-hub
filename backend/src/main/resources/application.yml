@@ -42,6 +42,7 @@ spring:
         secret-key: ${AWS_SECRET_ACCESS_KEY:test}
       s3:
         endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+        path-style-access-enabled: true
       sqs:
         endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
 

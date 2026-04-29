@@ -60,7 +60,7 @@ public class IntegrationConfig {
             return entity;
         });
         adapter.setMaxRows(10);
-        adapter.setUpdateSql("UPDATE sync_logs SET status = 'PROCESSING' WHERE id = :id");
+        adapter.setUpdateSql("UPDATE sync_logs SET status = 'PROCESSING' WHERE id IN (:id)");
         return adapter;
     }
 

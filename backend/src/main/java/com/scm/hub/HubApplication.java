@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @ComponentScan(basePackages = "com.scm.hub")
+@org.springframework.integration.config.EnableIntegration
 public class HubApplication {
 
     /**

@@ -26,7 +26,7 @@ services:
 
   # Cloud service simulation (S3, SQS).
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:3.4.0
     container_name: scm-localstack
     ports:
       - "4566:4566"
@@ -34,6 +34,7 @@ services:
       - SERVICES=s3,sqs
       - DEFAULT_REGION=us-east-1
       - DEBUG=1
+      - ACTIVATE_PRO=0
     volumes:
       - "./localstack-init:/etc/localstack/init/ready.d"
 

@@ -24,6 +24,7 @@ public class SyncLogMapper {
         return SyncLog.builder()
                 .id(entity.getId())
                 .entityName(entity.getEntityName())
+                .entityLabel(entity.getEntityLabel())
                 .entityId(entity.getEntityId())
                 .status(entity.getStatus())
                 .errorMessage(entity.getErrorMessage())

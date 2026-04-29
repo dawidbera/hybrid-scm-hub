@@ -27,6 +27,8 @@ public class SyncLog {
     private UUID id;
     /** Name of the domain entity class being synchronized (e.g., "Order") */
     private String entityName;
+    /** Human-readable identifier for the entity instance (e.g., "Order #123") */
+    private String entityLabel;
     /** Unique identifier of the specific entity instance being tracked */
     private UUID entityId;
     /** Current status of the sync operation */

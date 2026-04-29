@@ -8,6 +8,8 @@ export interface AuditLog {
   id?: string;
   /** Name of the entity being synchronized (e.g., 'Order', 'Product') */
   entityName: string;
+  /** Human-readable label of the specific entity (e.g., 'Order #123') */
+  entityLabel?: string;
   /** Unique identifier of the specific entity instance */
   entityId: string;
   /** Current status of the synchronization */

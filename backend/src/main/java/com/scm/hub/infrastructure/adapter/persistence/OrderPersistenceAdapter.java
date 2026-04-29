@@ -45,6 +45,7 @@ public class OrderPersistenceAdapter implements OrderPort {
         // Create sync log for cloud synchronization
         SyncLogEntity syncLog = SyncLogEntity.builder()
                 .entityName("Order")
+                .entityLabel("Order #" + entity.getId().toString().substring(0, 8))
                 .entityId(entity.getId())
                 .status(OrderStatus.PENDING)
                 .syncTimestamp(java.time.LocalDateTime.now())
@@ -95,6 +96,7 @@ public class OrderPersistenceAdapter implements OrderPort {
 
             SyncLogEntity syncLog = SyncLogEntity.builder()
                     .entityName("Order")
+                    .entityLabel("Order #" + entity.getId().toString().substring(0, 8))
                     .entityId(entity.getId())
                     .status(OrderStatus.PENDING)
                     .syncTimestamp(java.time.LocalDateTime.now())

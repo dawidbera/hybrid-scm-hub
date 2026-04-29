@@ -70,6 +70,7 @@ public class OrderMapper {
                 .id(item.getId())
                 .order(orderEntity)
                 .productId(item.getProductId())
+                .warehouseId(item.getWarehouseId())
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .build();
@@ -86,6 +87,7 @@ public class OrderMapper {
                 .id(entity.getId())
                 .orderId(entity.getOrder().getId())
                 .productId(entity.getProductId())
+                .warehouseId(entity.getWarehouseId())
                 .quantity(entity.getQuantity())
                 .price(entity.getPrice())
                 .build();

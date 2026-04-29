@@ -29,6 +29,9 @@ public class SyncLogEntity {
     /** Name of the entity type being synchronized */
     private String entityName;
 
+    /** Human-readable identifier for the entity (e.g., Order #1001, Product Name) */
+    private String entityLabel;
+
     /** ID of the specific entity instance */
     private UUID entityId;
 

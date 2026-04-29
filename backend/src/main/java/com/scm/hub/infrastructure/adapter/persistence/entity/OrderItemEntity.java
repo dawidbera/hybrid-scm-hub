@@ -32,6 +32,9 @@ public class OrderItemEntity {
     /** ID of the product ordered */
     private UUID productId;
 
+    /** ID of the warehouse from which the stock will be fulfilled */
+    private UUID warehouseId;
+
     /** Number of units ordered */
     private Integer quantity;
 

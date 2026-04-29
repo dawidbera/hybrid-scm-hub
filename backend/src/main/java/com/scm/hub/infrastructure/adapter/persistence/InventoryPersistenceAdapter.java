@@ -42,11 +42,13 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     /**
      * Creates a new synchronization log entry to trigger background sync to the cloud.
      * @param entityName The name of the entity being synced.
+     * @param entityLabel Human-readable label for the entity instance.
      * @param entityId The ID of the entity instance.
      */
-    private void createSyncLog(String entityName, UUID entityId) {
+    private void createSyncLog(String entityName, String entityLabel, UUID entityId) {
         SyncLogEntity syncLog = SyncLogEntity.builder()
                 .entityName(entityName)
+                .entityLabel(entityLabel)
                 .entityId(entityId)
                 .status(OrderStatus.PENDING)
                 .syncTimestamp(LocalDateTime.now())
@@ -63,7 +65,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     public Product saveProduct(Product product) {
         ProductEntity entity = mapper.toEntity(product);
         ProductEntity saved = productRepository.save(entity);
-        createSyncLog("Product", saved.getId());
+        createSyncLog("Product", saved.getName(), saved.getId());
         return mapper.toDomain(saved);
     }
 
@@ -97,7 +99,7 @@ public class InventoryPersistenceAdapter implements InventoryPort {
     public Warehouse saveWarehouse(Warehouse warehouse) {
         WarehouseEntity entity = mapper.toEntity(warehouse);
         WarehouseEntity saved = warehouseRepository.save(entity);
-        createSyncLog("Warehouse", saved.getId());
+        createSyncLog("Warehouse", saved.getName(), saved.getId());
         return mapper.toDomain(saved);
     }
 
@@ -162,7 +164,10 @@ public class InventoryPersistenceAdapter implements InventoryPort {
 
         try {
             StockEntity saved = stockRepository.save(entity);
-            createSyncLog("Stock", saved.getId());
+            String productLabel = productRepository.findById(saved.getProductId())
+                    .map(ProductEntity::getName)
+                    .orElse("Unknown Product");
+            createSyncLog("Stock", "Stock for " + productLabel, saved.getId());
             return populateProductInfo(mapper.toDomain(saved));
         } catch (Exception e) {
             if (e.getCause() instanceof org.springframework.orm.ObjectOptimisticLockingFailureException) {

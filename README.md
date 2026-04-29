@@ -246,35 +246,35 @@ erDiagram
         uuid entityId
         string status
         string errorMessage
-        WS_Server -.->|Push| WS_Client
-        ```
+        datetime syncTimestamp
+    }
+```
 
-        ## Hybrid Synchronization Strategy
+## Hybrid Synchronization Strategy
 
-        This project demonstrates two distinct patterns for data synchronization, each chosen for its specific strengths:
+This project demonstrates two distinct patterns for data synchronization, each chosen for its specific strengths:
 
-        ### 1. Database Polling (Spring Integration)
-        - **Used for:** Inventory updates and Warehouse metadata.
-        - **Pattern:** **Transactional Outbox**.
-        - **Why:** Absolute data integrity. Inventory changes are mission-critical and must be consistent with the local database. The "Outbox" (Sync Log) ensures that no stock update is ever lost, even during system crashes, by handling synchronization in reliable batches.
+### 1. Database Polling (Spring Integration)
+- **Used for:** Inventory updates and Warehouse metadata.
+- **Pattern:** **Transactional Outbox**.
+- **Why:** Absolute data integrity. Inventory changes are mission-critical and must be consistent with the local database. The "Outbox" (Sync Log) ensures that no stock update is ever lost, even during system crashes, by handling synchronization in reliable batches.
 
-        ### 2. Event-Driven (Amazon SQS)
-        - **Used for:** Order processing and Cloud-Native extensions.
-        - **Pattern:** **Asynchronous Messaging**.
-        - **Why:** High decoupling and low latency. Placing an order is a complex business event that triggers multiple downstream actions (S3 documentation, Cloud sync). SQS allows the system to respond instantly to the user while the "heavy lifting" happens asynchronously in the background.
+### 2. Event-Driven (Amazon SQS)
+- **Used for:** Order processing and Cloud-Native extensions.
+- **Pattern:** **Asynchronous Messaging**.
+- **Why:** High decoupling and low latency. Placing an order is a complex business event that triggers multiple downstream actions (S3 documentation, Cloud sync). SQS allows the system to respond instantly to the user while the "heavy lifting" happens asynchronously in the background.
 
-        ## Database Schema
-        ...
-        ### Request Flow Overview:
-        1.  **User Interaction:** The user performs an action in the Angular UI (e.g., login, placing an order, or checking inventory).
-        2.  **API Request:** The Frontend sends a REST request to the Backend through the `REST Controller Adapter`.
-        3.  **Domain Processing:**
-        *   **Authentication:** Handled by the `Auth Service` using JWT.
-        *   **Inventory Requests:** Handled directly by the `Inventory Service`.
-        *   **Order Requests:** Handled by the `Order Service`, which orchestrates stock reduction, S3 document generation, and SQS event publishing.
-        4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL). For inventory changes, it also creates a `SyncLog` entry (Transactional Outbox).
-        5.  **Dual-Path Synchronization:**
-        *   **Path A (Inventory):** The **Spring Integration Engine** polls pending logs and synchronizes them to the Cloud DB.
-        *   **Path B (Orders):** The **SQS Listener** picks up order events from the queue for near real-time processing and cloud archival.
-        6.  **Real-time Updates:** Successful changes trigger `WebSocket` notifications, allowing the UI to reflect updates across all connected clients instantly.
+## Detailed Request Flow
+
+1.  **User Interaction:** The user performs an action in the Angular UI (e.g., login, placing an order, or checking inventory).
+2.  **API Request:** The Frontend sends a REST request to the Backend through the `REST Controller Adapter`.
+3.  **Domain Processing:**
+    *   **Authentication:** Handled via JWT and Spring Security.
+    *   **Inventory Requests:** Handled by the `Inventory Service`.
+    *   **Order Requests:** Handled by the `Order Service`, which orchestrates stock reduction, S3 document generation, and SQS event publishing.
+4.  **Persistence:** The `Persistence Adapter` saves the state to the **On-Premise Database** (PostgreSQL). For inventory changes, it also creates a `SyncLog` entry (Transactional Outbox).
+5.  **Dual-Path Synchronization:**
+    *   **Path A (Inventory):** The **Spring Integration Engine** polls pending logs and synchronizes them to the Cloud DB.
+    *   **Path B (Orders):** The **SQS Listener** picks up order events from the queue for near real-time processing and cloud archival.
+6.  **Real-time Updates:** Successful changes trigger `WebSocket` notifications, allowing the UI to reflect updates across all connected clients instantly.
 

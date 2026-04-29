@@ -1,10 +1,18 @@
 describe('Hybrid SCM Hub E2E Tests', () => {
   beforeEach(() => {
     // Assuming the backend is running on port 8080
-    cy.visit('/');
+    cy.visit('/login');
+    cy.get('input[name="username"]').type('admin');
+    cy.get('input[name="password"]').type('password');
+    cy.get('button[type="submit"]').click();
+    
+    // Wait for navigation to dashboard
+    cy.url().should('not.include', '/login');
+    cy.contains('Hybrid-Cloud SCM', { timeout: 10000 }).should('be.visible');
   });
 
   it('should load the application', () => {
+    // Already verified in beforeEach, but here for completeness
     cy.contains('Hybrid-Cloud SCM').should('be.visible');
   });
 

@@ -81,6 +81,9 @@ public class OrderController {
     @GetMapping("/{id}/document")
     public ResponseEntity<Resource> downloadOrderDocument(@PathVariable UUID id) {
         Resource resource = orderDocumentService.downloadOrderDocument(id);
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"order-" + id + ".json\"")

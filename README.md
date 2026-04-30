@@ -258,7 +258,7 @@ This project demonstrates two distinct patterns for data synchronization, each c
 ### 1. Database Polling (Spring Integration)
 - **Used for:** Inventory updates and Warehouse metadata.
 - **Pattern:** **Transactional Outbox**.
-- **Why:** Absolute data integrity. Inventory changes are mission-critical and must be consistent with the local database. The "Outbox" (Sync Log) ensures that no stock update is ever lost, even during system crashes, by handling synchronization in reliable batches.
+- **Why:** Absolute data integrity. Inventory changes are mission-critical and must be consistent with the local database. The "Outbox" (Sync Log) ensures that no stock update is ever lost, even during system crashes, by handling synchronization in reliable batches. *For a detailed explanation of why we use the Transactional Outbox pattern instead of direct SQS publishing, see our [Architecture Deep Dive](docs/ARCHITECTURE-DEEP-DIVE.md).*
 
 ### 2. Event-Driven (Amazon SQS)
 - **Used for:** Order processing and Cloud-Native extensions.

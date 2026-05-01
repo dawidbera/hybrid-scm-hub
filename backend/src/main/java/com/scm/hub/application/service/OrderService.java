@@ -39,6 +39,7 @@ public class OrderService {
      * @return The created order with calculated total and timestamps.
      * @throws IllegalArgumentException if warehouse is not specified for an item or if stock is insufficient.
      */
+    @org.springframework.transaction.annotation.Transactional
     public Order createOrder(Order order) {
         // Calculate total from items, supporting null item lists.
         double total = order.getItems() == null ? 0.0 : order.getItems().stream()

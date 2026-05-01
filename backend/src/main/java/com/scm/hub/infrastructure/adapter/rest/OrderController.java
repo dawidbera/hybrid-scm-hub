@@ -5,6 +5,7 @@ import com.scm.hub.application.service.OrderService;
 import com.scm.hub.domain.model.Order;
 import com.scm.hub.domain.model.OrderStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
 
     private final OrderService orderService;
@@ -80,10 +82,26 @@ public class OrderController {
      */
     @GetMapping("/{id}/document")
     public ResponseEntity<Resource> downloadOrderDocument(@PathVariable UUID id) {
-        Resource resource = orderDocumentService.downloadOrderDocument(id);
-        if (!resource.exists()) {
+        log.info("Request to download document for order {}", id);
+        Order order = orderService.getOrderById(id);
+        if (order == null) {
+            log.warn("Order {} not found in database", id);
             return ResponseEntity.notFound().build();
         }
+        
+        Resource resource = orderDocumentService.downloadOrderDocument(id);
+        if (!resource.exists()) {
+            log.info("Document for order {} not found in S3, attempting regeneration", id);
+            // If document doesn't exist but order does, try to regenerate it
+            orderDocumentService.uploadOrderDocument(order);
+            resource = orderDocumentService.downloadOrderDocument(id);
+            
+            if (!resource.exists()) {
+                log.error("Failed to regenerate document for order {}", id);
+                return ResponseEntity.notFound().build();
+            }
+        }
+        log.info("Successfully serving document for order {}", id);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"order-" + id + ".json\"")

@@ -33,10 +33,15 @@ public class OrderDocumentService {
      * @param order The order to document.
      */
     public void uploadOrderDocument(Order order) {
+        if (order == null || order.getId() == null) {
+            log.warn("Cannot upload document for null order or order with null ID");
+            return;
+        }
         try {
             String fileName = String.format("order-%s.json", order.getId());
             byte[] content = objectMapper.writeValueAsBytes(order);
             
+            log.info("Uploading order document {} to bucket {}", fileName, bucketName);
             try (InputStream inputStream = new ByteArrayInputStream(content)) {
                 s3Template.upload(bucketName, fileName, inputStream);
             }

@@ -20,6 +20,10 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
+/**
+ * Integration test for cloud-native order operations.
+ * Verifies that creating an order correctly triggers S3 document generation and SQS event publication.
+ */
 public class OrderCloudNativeIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -43,6 +47,9 @@ public class OrderCloudNativeIntegrationTest extends AbstractIntegrationTest {
     @Value("${scm.aws.sqs.queue-name}")
     private String queueName;
 
+    /**
+     * Initializes the necessary AWS infrastructure (S3 bucket and SQS queue) in LocalStack.
+     */
     @BeforeEach
     void setup() {
         // Create bucket and queue if they don't exist in LocalStack
@@ -55,6 +62,10 @@ public class OrderCloudNativeIntegrationTest extends AbstractIntegrationTest {
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Verifies that order creation results in an asynchronous document upload to S3
+     * and a notification message sent to SQS.
+     */
     @Test
     void shouldCreateOrderAndTriggerCloudNativeOperations() {
         // Given

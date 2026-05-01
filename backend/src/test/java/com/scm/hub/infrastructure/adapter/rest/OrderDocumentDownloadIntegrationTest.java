@@ -22,6 +22,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Integration test for the order document download functionality.
+ * Verifies that order documents can be retrieved from S3 and are regenerated if missing.
+ */
 @AutoConfigureMockMvc
 public class OrderDocumentDownloadIntegrationTest extends AbstractIntegrationTest {
 
@@ -40,6 +44,9 @@ public class OrderDocumentDownloadIntegrationTest extends AbstractIntegrationTes
     @Value("${scm.aws.s3.bucket-name}")
     private String bucketName;
 
+    /**
+     * Ensures the S3 bucket exists before each test.
+     */
     @BeforeEach
     void setup() {
         try {
@@ -47,6 +54,10 @@ public class OrderDocumentDownloadIntegrationTest extends AbstractIntegrationTes
         } catch (Exception ignored) {}
     }
 
+    /**
+     * Verifies that if an order document is missing from S3, the download request
+     * triggers its regeneration and returns the file successfully.
+     */
     @Test
     @WithMockUser
     void shouldRegenerateDocumentIfMissingFromS3() throws Exception {
@@ -73,6 +84,9 @@ public class OrderDocumentDownloadIntegrationTest extends AbstractIntegrationTes
         assertThat(s3Template.objectExists(bucketName, fileName)).isTrue();
     }
 
+    /**
+     * Verifies that requesting a document for a non-existent order returns a 404 status.
+     */
     @Test
     @WithMockUser
     void shouldReturn404IfOrderDoesNotExist() throws Exception {

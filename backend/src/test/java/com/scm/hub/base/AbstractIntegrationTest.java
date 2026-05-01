@@ -13,7 +13,7 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 /**
  * Base class for integration tests requiring a dual-database setup (On-Premise and Cloud)
  * and AWS service simulation (S3, SQS).
-...
+ * Provides automatic startup and configuration of Testcontainers for PostgreSQL and LocalStack.
  */
 @SpringBootTest(properties = {
     "sync.enabled=false",
